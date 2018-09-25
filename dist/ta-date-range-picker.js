@@ -67,15 +67,24 @@
                                 var current = $scope.getCurrentSelection();
 
                                 var date = day.date;
-                                // FIXME: if the end date is before the start date, is becomes the new start date...?!
+                                
+                                // TODO: Allow scenario where clicking the same day lets you select 1 day of data, start and end. 
                                 if ((current.start && current.end) || !current.start) {
                                     current.start = moment(date);
                                     current.end = null;
                                     $scope.inputDates[0] = current.start.format(pickerDateFormat);
+                                    $scope.inputDates[1] = '';
                                 } else if (current.start && !current.end) {
                                     if (current.start.isAfter(date, 'day')) {
+                                        // if end date is before start, make this the new start
+                                        // current.start = moment(date);
+                                        // $scope.inputDates[0] = current.start.format(pickerDateFormat);
+
+                                        // if end date is before start, swap start and end
+                                        current.end = current.start
                                         current.start = moment(date);
                                         $scope.inputDates[0] = current.start.format(pickerDateFormat);
+                                        $scope.inputDates[1] = current.end.format(pickerDateFormat);
                                     }
                                     else if (current.start.isBefore(date, 'day')) {
                                         current.end = moment(date);
