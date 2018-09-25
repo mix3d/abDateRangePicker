@@ -35,7 +35,7 @@
                         return scope.visible = true;
                     };
                     scope.hide = function ($event) {
-                        if ($event != null) {
+                        if ($event !== null) {
                             if (typeof $event.stopPropagation === "function") {
                                 $event.stopPropagation();
                             }
@@ -44,12 +44,12 @@
                         return scope.start = null;
                     };
                     scope.handlePickerClick = function ($event) {
-                        return $event != null ? typeof $event.stopPropagation === "function" ? $event.stopPropagation() : void 0 : void 0;
+                        return $event !== null ? typeof $event.stopPropagation === "function" ? $event.stopPropagation() : void 0 : void 0;
                     };
 
                     scope.select = function (day, $event) {
 
-                        if ($event != null) {
+                        if ($event !== null) {
                             if (typeof $event.stopPropagation === "function") {
                                 $event.stopPropagation();
                             }
@@ -82,7 +82,7 @@
                     scope.setRange = function (range, $event) {
                         if (!range)
                             return;
-                        if (range == CUSTOM) {
+                        if (range === CUSTOM) {
                             scope.showCalendars = true;
                             return;
                         }
@@ -93,7 +93,7 @@
                     };
 
                     scope.ok = function ($event) {
-                        if ($event != null) {
+                        if ($event !== null) {
                             if (typeof $event.stopPropagation === "function") {
                                 $event.stopPropagation();
                             }
@@ -108,7 +108,7 @@
                     };
 
                     scope.clear = function ($event) {
-                        if ($event != null) {
+                        if ($event !== null) {
                             if (typeof $event.stopPropagation === "function") {
                                 $event.stopPropagation();
                             }
@@ -118,7 +118,7 @@
                     };
 
                     scope.applySelection = function ($event) {
-                        if ($event != null) {
+                        if ($event !== null) {
                             if (typeof $event.stopPropagation === "function") {
                                 $event.stopPropagation();
                             }
@@ -129,7 +129,7 @@
                     }
 
                     scope.move = function (date, n, $event) {
-                        if ($event != null) {
+                        if ($event !== null) {
                             if (typeof $event.stopPropagation === "function") {
                                 $event.stopPropagation();
                             }
@@ -161,7 +161,7 @@
 
                         var current = scope.getCurrentSelection();
 
-                        if (!day || day.number == false)
+                        if (!day || day.number === false)
                             return "off";
 
                         if (current) {
@@ -181,7 +181,7 @@
                         for (var i = 0; i < scope.ranges.length; i++) {
                             var item = scope.ranges[i];
                             item.active = false;
-                            if (item.range && item.range != CUSTOM && current.start && current.end) {
+                            if (item.range && item.range !== CUSTOM && current.start && current.end) {
                                 if (current.start.isSame(item.range.start, 'day') && current.end.isSame(item.range.end, 'day')) {
                                     item.active = true;
                                     found = true;
@@ -240,7 +240,7 @@
                     element.append(el);
 
                     element.bind("click", function (e) {
-                        if (e != null) {
+                        if (e !== null) {
                             if (typeof e.stopPropagation === "function") {
                                 e.stopPropagation();
                             }
@@ -267,7 +267,7 @@
             };
 
             function prepareRanges(scope) {
-                if (scope.ranges[scope.ranges.length - 1].range != CUSTOM)
+                if (scope.ranges[scope.ranges.length - 1].range !== CUSTOM)
                     scope.ranges.push({ label: 'Custom Range', range: CUSTOM });
 
                 scope.resetRangeClass();
@@ -330,7 +330,7 @@
 
                     var days = week.length;
                     if (days < 7) {
-                        if (weeks.length == 0) {
+                        if (weeks.length === 0) {
                             while (days < 7) {
                                 week.splice(0, 0, { number: false, disabled: true });
                                 days += 1;
