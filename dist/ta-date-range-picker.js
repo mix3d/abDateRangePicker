@@ -7,18 +7,13 @@
             let pickerDateFormat = "MM/DD/YYYY";
             let monthFormat = "MMM YYYY";
 
-            let tryStopProp = function ($event) {
-                return $event && typeof $event.stopPropagation === "function" ?
-                    $event.stopPropagation() : void 0;
-            }
-
             return {
                 scope: {
                     model: "=ngModel",
                     ranges: "=?",
                     callback: "&"
                 },
-                template: `
+                template: html`
                 <div class="selectbox">
                     <i class="glyphicon glyphicon-calendar"></i>
                     <span ng-show="model">{{model.start.format(inputFormat)}}
@@ -26,229 +21,254 @@
                     <span ng-hide="model">Select date range</span>
                     <b class="caret"></b>
                 </div>`,
-                link: function ($scope, element, attrs) {
-                    $scope.weekDays = moment.weekdaysMin();
+                compile(tElement, tAttrs, transclude) {
+                    return {
+                        pre($scope, element, attrs, controller) {
+                            //check for valueless attributes
+                            $scope.softApply = attrs.hasOwnProperty('softApply')
+                            // if softApply is set, then always show calendars
+                            $scope.alwaysShowCalendars = attrs.hasOwnProperty('alwaysShowCalendars') || $scope.softApply;
+                        },
+                        post($scope, element, attrs, controller) {
+                            $scope.weekDays = moment.weekdaysMin();
 
-                    $scope.inputFormat = inputFormat;
+                            $scope.inputFormat = inputFormat;
 
-                    //set default ranges
-                    if (!($scope.ranges && $scope.ranges.length))
-                        $scope.ranges = getDefaultRanges();
+                            //set default ranges
+                            if (!($scope.ranges && $scope.ranges.length))
+                                $scope.ranges = getDefaultRanges();
 
-                    $scope.show = function () {
-                        //clear prevs
-                        $scope.currentSelection = null;
+                            $scope.show = function () {
+                                //clear prevs
+                                $scope.currentSelection = null;
 
-                        //prepare
-                        prepareMonths($scope);
-                        $scope.selection = $scope.model;
-                        prepareRanges($scope);
-                        return $scope.visible = true;
-                    };
-                    $scope.hide = function ($event) {
-                        tryStopProp($event)
-                        $scope.visible = false;
-                        return $scope.start = null;
-                    };
-                    $scope.handlePickerClick = function ($event) {
-                        return tryStopProp($event);
-                    };
+                                //prepare
+                                prepareMonths($scope);
+                                $scope.selection = $scope.model;
+                                prepareRanges($scope);
+                                return $scope.visible = true;
+                            };
+                            $scope.hide = function ($event) {
+                                tryStopProp($event)
+                                $scope.visible = false;
+                                return $scope.start = null;
+                            };
+                            $scope.handlePickerClick = function ($event) {
+                                return tryStopProp($event);
+                            };
 
-                    $scope.select = function (day, $event) {
-                        tryStopProp($event);
-                        if (day.disabled) {
-                            return;
-                        }
+                            $scope.select = function (day, $event) {
+                                tryStopProp($event);
+                                if (day.disabled) {
+                                    return;
+                                }
 
-                        //both dates are already selected, reset dates
-                        var current = $scope.getCurrentSelection();
+                                //both dates are already selected, reset dates
+                                var current = $scope.getCurrentSelection();
 
-                        var date = day.date;
-                        if ((current.start && current.end) || !current.start) {
-                            current.start = moment(date);
-                            current.end = null;
-                            $scope.inputDates[0] = current.start.format(pickerDateFormat);
-                        } else if (current.start && !current.end) {
-                            if (current.start.isAfter(date, 'day')) {
-                                current.start = moment(date);
-                                $scope.inputDates[0] = current.start.format(pickerDateFormat);
+                                var date = day.date;
+                                // FIXME: if the end date is before the start date, is becomes the new start date...?!
+                                if ((current.start && current.end) || !current.start) {
+                                    current.start = moment(date);
+                                    current.end = null;
+                                    $scope.inputDates[0] = current.start.format(pickerDateFormat);
+                                } else if (current.start && !current.end) {
+                                    if (current.start.isAfter(date, 'day')) {
+                                        current.start = moment(date);
+                                        $scope.inputDates[0] = current.start.format(pickerDateFormat);
+                                    }
+                                    else if (current.start.isBefore(date, 'day')) {
+                                        current.end = moment(date);
+                                        $scope.inputDates[1] = current.end.format(pickerDateFormat);
+                                    }
+                                }
+                                $scope.resetRangeClass();
+                            };
+
+                            $scope.setRange = function (range, $event) {
+                                tryStopProp($event);
+                                if (!range)
+                                    return;
+                                if (range === CUSTOM) {
+                                    $scope.showCalendars = true;
+                                    return;
+                                }
+                                $scope.currentSelection = range.clone();
+                                $scope.updateStartOrEndDate();
+                                if($scope.softApply){
+                                    $scope.inputDates[0] = $scope.currentSelection.start.format(pickerDateFormat);
+                                    $scope.inputDates[1] = $scope.currentSelection.end.format(pickerDateFormat);
+                                }
+                                else{
+                                    $scope.showCalendars = false;
+                                    $scope.selection = $scope.currentSelection.clone();
+                                    $scope.commitAndClose($event);
+                                }
+                            };
+
+                            $scope.commitAndClose = function () {
+                                $scope.model = $scope.selection;
+                                $timeout(function () {
+                                    if ($scope.callback) {
+                                        return $scope.callback();
+                                    }
+                                });
+                                return $scope.hide();
+                            };
+
+                            $scope.clear = function ($event) {
+                                tryStopProp($event);
+                                $scope.selection = null;
+                                $scope.commitAndClose($event);
+                            };
+
+                            $scope.applySelection = function ($event) {
+                                tryStopProp($event);
+                                $scope.showCalendars = true;
+                                $scope.selection = moment.range($scope.currentSelection.start.clone(), $scope.currentSelection.end.clone());
+                                $scope.commitAndClose($event);
                             }
-                            else if (current.start.isBefore(date, 'day')) {
-                                current.end = moment(date);
-                                $scope.inputDates[1] = current.end.format(pickerDateFormat);
+
+                            $scope.move = function (date, n, $event) {
+                                tryStopProp($event);
+
+                                var currentStart, currentEnd;
+
+                                if (n < 0) {
+                                    currentStart = date.clone().add(n, 'months');
+                                    currentEnd = currentStart.clone().add(1, 'months');
+                                } else {
+                                    currentEnd = date.clone().add(n, 'months');
+                                    currentStart = currentEnd.clone().add(-1, 'months');
+                                }
+
+                                $scope.months[0] = createMonth(currentStart);
+                                $scope.months[1] = createMonth(currentEnd);
                             }
-                        }
-                        $scope.resetRangeClass();
-                    };
 
-                    $scope.setRange = function (range, $event) {
-                        if (!range)
-                            return;
-                        if (range === CUSTOM) {
-                            $scope.showCalendars = true;
-                            return;
-                        }
-                        $scope.showCalendars = false;
-                        $scope.currentSelection = range.clone();
-                        $scope.selection = $scope.currentSelection.clone();
-                        $scope.ok($event);
-                    };
-
-                    $scope.ok = function ($event) {
-                        tryStopProp($event);
-                        $scope.model = $scope.selection;
-                        $timeout(function () {
-                            if ($scope.callback) {
-                                return $scope.callback();
+                            $scope.getCurrentSelection = function() {
+                                if (!$scope.currentSelection && $scope.selection)
+                                    $scope.currentSelection = $scope.selection.clone();
+                                if (!$scope.currentSelection)
+                                    $scope.currentSelection = {};
+                                return $scope.currentSelection;
                             }
-                        });
-                        return $scope.hide();
-                    };
 
-                    $scope.clear = function ($event) {
-                        $scope.selection = null;
-                        $scope.ok($event);
-                    };
+                            $scope.getClassName = function (day) {
 
-                    $scope.applySelection = function ($event) {
-                        $scope.showCalendars = true;
-                        $scope.selection = moment.range($scope.currentSelection.start.clone(), $scope.currentSelection.end.clone());
-                        $scope.ok($event);
-                    }
+                                var current = $scope.getCurrentSelection();
 
-                    $scope.move = function (date, n, $event) {
-                        tryStopProp($event);
+                                if (!day || day.number === false)
+                                    return "off";
 
-                        var currentStart, currentEnd;
+                                if (current) {
+                                    if (current.start && current.start.isSame(day.date, 'day'))
+                                        return "active start-date";
+                                    if (current.end && current.end.isSame(day.date, 'day'))
+                                        return "active end-date";
+                                    if (current.start && current.end && current.start.isBefore(day.date, 'day') && current.end.isAfter(day.date, 'day'))
+                                        return "in-range";
+                                }
+                                return "available";
+                            };
 
-                        if (n < 0) {
-                            currentStart = date.clone().add(n, 'months');
-                            currentEnd = currentStart.clone().add(1, 'months');
-                        } else {
-                            currentEnd = date.clone().add(n, 'months');
-                            currentStart = currentEnd.clone().add(-1, 'months');
-                        }
+                            $scope.resetRangeClass = function () {
+                                var found = false;
+                                var current = $scope.getCurrentSelection();
+                                for (var i = 0; i < $scope.ranges.length; i++) {
+                                    var item = $scope.ranges[i];
+                                    item.active = false;
+                                    if (item.range && item.range !== CUSTOM && current.start && current.end) {
+                                        if (current.start.isSame(item.range.start, 'day') && current.end.isSame(item.range.end, 'day')) {
+                                            item.active = true;
+                                            found = true;
+                                        }
+                                    }
+                                }
+                                if (!found)
+                                    $scope.ranges[$scope.ranges.length - 1].active = true;
+                            };
 
-                        $scope.months[0] = createMonth(currentStart);
-                        $scope.months[1] = createMonth(currentEnd);
-                    }
+                            $scope.updateStartOrEndDate = function (first, last) {
+                                var current = $scope.getCurrentSelection();
 
-                    $scope.getCurrentSelection = function() {
-                        if (!$scope.currentSelection && $scope.selection)
-                            $scope.currentSelection = $scope.selection.clone();
-                        if (!$scope.currentSelection)
-                            $scope.currentSelection = {};
-                        return $scope.currentSelection;
-                    }
+                                if (first) {
+                                    var start = moment($scope.inputDates[0]);
+                                    if (!start)
+                                        return;
 
-                    $scope.getClassName = function (day) {
+                                    current.start = start;
+                                    if (!current.end || current.end.isBefore(start, 'day')) {
+                                        current.end = start;
+                                        $scope.inputDates[1] = current.end.format(pickerDateFormat);
+                                    }
+                                } else if (last) {
+                                    var end = moment($scope.inputDates[1]);
+                                    if (!end)
+                                        return;
 
-                        var current = $scope.getCurrentSelection();
+                                    current.end = end;
+                                    if (!current.start || current.start.isAfter(end, 'day')) {
+                                        current.start = end;
+                                        $scope.inputDates[0] = current.start.format(pickerDateFormat);
+                                    }
+                                }
+                                $scope.resetRangeClass();
+                            }
 
-                        if (!day || day.number === false)
-                            return "off";
+                            $scope.moveToMonth = function (first, index) {
+                                if (!first)
+                                    return;
 
-                        if (current) {
-                            if (current.start && current.start.isSame(day.date, 'day'))
-                                return "active start-date";
-                            if (current.end && current.end.isSame(day.date, 'day'))
-                                return "active end-date";
-                            if (current.start && current.end && current.start.isBefore(day.date, 'day') && current.end.isAfter(day.date, 'day'))
-                                return "in-range";
-                        }
-                        return "available";
-                    };
+                                var start = moment($scope.inputDates[0]);
+                                if (!start)
+                                    return;
 
-                    $scope.resetRangeClass = function () {
-                        var found = false;
-                        var current = $scope.getCurrentSelection();
-                        for (var i = 0; i < $scope.ranges.length; i++) {
-                            var item = $scope.ranges[i];
-                            item.active = false;
-                            if (item.range && item.range !== CUSTOM && current.start && current.end) {
-                                if (current.start.isSame(item.range.start, 'day') && current.end.isSame(item.range.end, 'day')) {
-                                    item.active = true;
-                                    found = true;
+                                if (!start.isSame($scope.months[index].date, 'month')) {
+                                    //move to month
+                                    $scope.months[0] = createMonth(start.clone());
+                                    $scope.months[1] = createMonth(start.clone().add(1, 'months'));
                                 }
                             }
-                        }
-                        if (!found)
-                            $scope.ranges[$scope.ranges.length - 1].active = true;
-                    };
 
-                    $scope.updateStartOrEndDate = function (first, last) {
-                        var current = $scope.getCurrentSelection();
+                            /**************************************************************************************/
+                            //load popup template
+                            var el = $compile(angular.element(getPickDateTemplate()))($scope);
+                            element.append(el);
 
-                        if (first) {
-                            var start = moment($scope.inputDates[0]);
-                            if (!start)
-                                return;
-
-                            current.start = start;
-                            if (!current.end || current.end.isBefore(start, 'day')) {
-                                current.end = start;
-                                $scope.inputDates[1] = current.end.format(pickerDateFormat);
-                            }
-                        } else if (last) {
-                            var end = moment($scope.inputDates[1]);
-                            if (!end)
-                                return;
-
-                            current.end = end;
-                            if (!current.start || current.start.isAfter(end, 'day')) {
-                                current.start = end;
-                                $scope.inputDates[0] = current.start.format(pickerDateFormat);
-                            }
-                        }
-                        $scope.resetRangeClass();
+                            element.bind("click", function (e) {
+                                if (e !== null) {
+                                    if (typeof e.stopPropagation === "function") {
+                                        e.stopPropagation();
+                                    }
+                                }
+                                return $scope.$apply(function () {
+                                    if ($scope.visible) {
+                                        return $scope.hide();
+                                    } else {
+                                        return $scope.show();
+                                    }
+                                });
+                            });
+                            var documentClickFn = function (e) {
+                                $scope.$apply(function () {
+                                    return $scope.hide();
+                                });
+                                return true;
+                            };
+                            angular.element(document).bind("click", documentClickFn);
+                            $scope.$on('$destroy', function () {
+                                return angular.element(document).unbind('click', documentClickFn);
+                            });
+                        },
                     }
-
-                    $scope.moveToMonth = function (first, index) {
-                        if (!first)
-                            return;
-
-                        var start = moment($scope.inputDates[0]);
-                        if (!start)
-                            return;
-
-                        if (!start.isSame($scope.months[index].date, 'month')) {
-                            //move to month
-                            $scope.months[0] = createMonth(start.clone());
-                            $scope.months[1] = createMonth(start.clone().add(1, 'months'));
-                        }
-                    }
-
-                    /**************************************************************************************/
-                    //load popup template
-                    var el = $compile(angular.element(getPickDateTemplate()))($scope);
-                    element.append(el);
-
-                    element.bind("click", function (e) {
-                        if (e !== null) {
-                            if (typeof e.stopPropagation === "function") {
-                                e.stopPropagation();
-                            }
-                        }
-                        return $scope.$apply(function () {
-                            if ($scope.visible) {
-                                return $scope.hide();
-                            } else {
-                                return $scope.show();
-                            }
-                        });
-                    });
-                    var documentClickFn = function (e) {
-                        $scope.$apply(function () {
-                            return $scope.hide();
-                        });
-                        return true;
-                    };
-                    angular.element(document).bind("click", documentClickFn);
-                    $scope.$on('$destroy', function () {
-                        return angular.element(document).unbind('click', documentClickFn);
-                    });
                 }
             };
+            //Unsure why this is built this way, but refactored anyways
+            function tryStopProp($event) {
+                return $event && typeof $event.stopPropagation === "function" ?
+                    $event.stopPropagation() : void 0;
+            }
 
             function prepareRanges($scope) {
                 if ($scope.ranges[$scope.ranges.length - 1].range !== CUSTOM)
@@ -354,11 +374,13 @@
                     }
                 ];
             }
+            //Hack to allow html style rendering in Template Literals VS Code
+            function html(h, ...values){ return h.join('');};
 
                 function getPickDateTemplate() {
-                    return `
+                    return html`
 <div ng-show="visible" ng-click="handlePickerClick($event)" class="ta-daterangepicker">
-    <div ng-repeat="month in months" class="calendar" ng-show="showCalendars">
+    <div ng-repeat="month in months" class="calendar" ng-show="showCalendars || alwaysShowCalendars">
         <div class="input">
             <input class="input-mini active" type="text" ng-model="inputDates[$index]" ng-change="updateStartOrEndDate($first,$last)"
                 ng-blur="moveToMonth($first,$index)" />
@@ -370,13 +392,16 @@
             <table>
                 <thead>
                     <tr>
-                        <th class="available"><a ng-if="$first" ng-click="move(month.date, -1, $event)"><i class="glyphicon glyphicon-chevron-left"></i>
-                            </a></th>
+                        <th class="available">
+                            <a ng-if="$first" ng-click="move(month.date, -1, $event)"><i class="glyphicon glyphicon-chevron-left"></i></a>
+                        </th>
                         <th colspan="5">
                             <div class="month-name">{{::month.name}}</div>
                         </th>
-                        <th class="available"> <a ng-if="$last" ng-click="move(month.date, +1, $event)"><i class="glyphicon glyphicon-chevron-right"></i>
-                            </a> </th>
+                        <th class="available">
+                            <a ng-if="$last" ng-click="move(month.date, +1, $event)"><i class="glyphicon glyphicon-chevron-right"></i>
+                            </a>
+                        </th>
                     </tr>
                     <tr>
                         <th ng-repeat="day in weekDays" class="weekday">{{::day}}</th>
@@ -394,8 +419,8 @@
     </div>
     <div class="ranges">
         <ul>
-            <li ng-repeat="item in ranges" ng-class="{\'active\':item.active}">
-                <div ng-click="setRange(item.range,$event)">{{::item.label}}</div>
+            <li ng-repeat="item in ranges" ng-class="{\'active\':item.active}" ng-click="setRange(item.range,$event)">
+                {{::item.label}}
             </li>
         </ul>
         <div>

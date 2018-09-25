@@ -18,12 +18,12 @@
 
         <p>&nbsp;</p>
         <h3>Default Ranges</h3>
-        <ta-date-range-picker ng-model="dateRange2"></ta-date-range-picker>
+        <ta-date-range-picker ng-model="dateRange2" soft-apply></ta-date-range-picker>
 
         <p>&nbsp;</p>
 
         <h3>Custom Ranges - with Callback</h3>
-        <ta-date-range-picker ng-model="dateRange" ranges="customRanges" callback="dateRangeChanged()"></ta-date-range-picker>
+        <ta-date-range-picker ng-model="dateRange" ranges="customRanges" callback="dateRangeChanged()" always-show-calendars></ta-date-range-picker>
 
         <p>&nbsp;</p>
         <h3>Call back: <code>{{mycallback}}</code></h3>
