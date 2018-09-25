@@ -8,14 +8,21 @@ Unfortunately, it was outdated, so I forked to upgrade to a more modern workflow
 Goals:
 
 - Configurable date display formatting
-- Configurable selection styles
+- ~~Configurable selection styles~~
   - Select predefined range = applies selection
   - Select predefined range = updates calendars selection, and always requires Apply button
-- Remove dependencies
+- ~~Remove dependencies~~
   - ~~bindonce~~ _- done_
-  - moment-range
-    - doesn't seem to use any range-specific things
+  - ~~moment-range~~ _- done_
+    - Didn't actually use any moment-range-specific things, just start and end, replaced with objects.
 - configurable text-icon package
+- toggle icon display
+- Proper Build Steps
+  - ~~NPM config~~
+  - ~~Sass~~
+  - JS Compiler w/ Webpack/Babel
+
+
 
 ### Pure AngularJS DateRangePicker (no jQuery required)
 
@@ -33,9 +40,8 @@ After searching all over for a simple AngularJS Date Range Picker that did not r
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
     <link href="dist/ta-date-range-picker.css" rel="stylesheet" />
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.11/angular.min.js"></script>
     <script type="text/javascript" src="libs/moment.min.js"></script>
-    <script type="text/javascript" src="libs/moment-range.min.js"></script>
     <script src="dist/ta-date-range-picker.js"></script>
 
 ### Sample Code
@@ -44,43 +50,51 @@ After searching all over for a simple AngularJS Date Range Picker that did not r
         .controller("MainCtrl", ['$scope', function ($scope) {
 
             // specify default date range in controller
-            $scope.dateRange = moment().range("2015-12-05", "2016-01-25");
+            $scope.dateRange = { start: moment("2015-12-05"), end: moment("2016-01-25")};
 
             //Select range options
             $scope.customRanges = [
                 {
                     label: "This week",
-                    range: moment().range(
-                        moment().startOf("week").startOf("day"),
-                        moment().endOf("week").startOf("day")
-                    )
+                    range: {
+                        start: moment().startOf("week").startOf("day"),
+                        end: moment().endOf("week").startOf("day")
+                    }
                 },
                 {
                     label: "Last month",
-                    range: moment().range(
-                        moment().add(-1, "month").startOf("month").startOf("day"),
-                        moment().add(-1, "month").endOf("month").startOf("day")
-                    )
+                    range: {
+                        start: moment().add(-1, "month").startOf("month").startOf("day"),
+                        end: moment().add(-1, "month").endOf("month").startOf("day")
+                    }
                 },
                 {
                     label: "This month",
-                    range: moment().range(
-                        moment().startOf("month").startOf("day"),
-                        moment().endOf("month").startOf("day")
-                    )
+                    range: {
+                        start: moment().startOf("month").startOf("day"),
+                        end: moment().endOf("month").startOf("day")
+                    }
                 }
             ];
 
-            $scope.mycallback = "None";
+            $scope.SelectedRangeText = "None";
             $scope.dateRangeChanged = function() {
-                $scope.mycallback = `from  ${$scope.dateRange.start.format("LL")}
-                                     to ${$scope.dateRange.end.format("LL")}`;
+                $scope.SelectedRangeText = `from  ${$scope.dateRange.start.format("LL")}
+                                            to ${$scope.dateRange.end.format("LL")}`;
             }
 
         }]);
 
-### Also Requires
+### Dependencies
 
-- [Moment](https://github.com/moment/moment)
-- [Moment-Range](https://github.com/gf3/moment-range)
-- [BindOnce](https://github.com/Pasvaz/bindonce)
+- [Moment.js](https://github.com/moment/moment)
+
+### Attributes
+
+| Name                    | Type               | Default                              | Description                                                                                      |
+| ----------------------- | ------------------ | ------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `ng-model`              | Object, required   | `{ start: moment(), end: moment() }` | An object with start and end keys pointing to moment.js objects.                                 |
+| `ranges`                | Object, optional   |                                      | an array of objects, each with a label:"text" and range: {start, end} values. See above example. |
+| `callback`              | Function, optional |                                      | Callback function is called when the dates are changed / applied                                 |
+| `must-apply`            | N/A                | `false`                              | Callback function is called when the dates are changed / applied                                 |
+| `always-show-calendars` | N/A                | `false`                              | Callback function is called when the dates are changed / applied                                 |

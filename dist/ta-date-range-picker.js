@@ -25,9 +25,9 @@
                     return {
                         pre($scope, element, attrs, controller) {
                             //check for valueless attributes
-                            $scope.softApply = attrs.hasOwnProperty('softApply')
-                            // if softApply is set, then always show calendars
-                            $scope.alwaysShowCalendars = attrs.hasOwnProperty('alwaysShowCalendars') || $scope.softApply;
+                            $scope.mustApply = attrs.hasOwnProperty('mustApply')
+                            // if mustApply is set, then always show calendars
+                            $scope.alwaysShowCalendars = attrs.hasOwnProperty('alwaysShowCalendars') || $scope.mustApply;
                         },
                         post($scope, element, attrs, controller) {
                             $scope.weekDays = moment.weekdaysMin();
@@ -67,7 +67,7 @@
                                 var current = $scope.getCurrentSelection();
 
                                 var date = day.date;
-                                
+
                                 // TODO: Allow scenario where clicking the same day lets you select 1 day of data, start and end. 
                                 if ((current.start && current.end) || !current.start) {
                                     current.start = moment(date);
@@ -102,9 +102,10 @@
                                     $scope.showCalendars = true;
                                     return;
                                 }
+                                // FIXME: This is a bug, range.clone doesn't work anymore after removing moment-range
                                 $scope.currentSelection = range.clone();
                                 $scope.updateStartOrEndDate();
-                                if($scope.softApply){
+                                if($scope.mustApply){
                                     $scope.inputDates[0] = $scope.currentSelection.start.format(pickerDateFormat);
                                     $scope.inputDates[1] = $scope.currentSelection.end.format(pickerDateFormat);
                                 }
@@ -134,7 +135,10 @@
                             $scope.applySelection = function ($event) {
                                 tryStopProp($event);
                                 $scope.showCalendars = true;
-                                $scope.selection = moment.range($scope.currentSelection.start.clone(), $scope.currentSelection.end.clone());
+                                $scope.selection = {
+                                    start: $scope.currentSelection.start.clone(),
+                                    end: $scope.currentSelection.end.clone()
+                                };
                                 $scope.commitAndClose($event);
                             }
 
@@ -367,19 +371,38 @@
                 return [
                     {
                         label: "This week",
-                        range: moment().range(moment().startOf("week").startOf("day"), moment().endOf("week").startOf("day"))
-                    }, {
-                        label: "Next week",
-                        range: moment().range(moment().startOf("week").add(1, "week").startOf("day"), moment().add(1, "week").endOf("week").startOf("day"))
-                    }, {
+                        range: {
+                            start: moment().startOf("week").startOf("day"),
+                            end: moment().endOf("week").startOf("day")
+                        }
+                    },
+                    {
+                        label: "Next Week",
+                        range:{
+                            start: moment().startOf("week").add(1, "week").startOf("day"),
+                            end:  moment().add(1, "week").endOf("week").startOf("day")
+                        }
+                    },
+                    {
                         label: "This month",
-                        range: moment().range(moment().startOf("month").startOf("day"), moment().endOf("month").startOf("day"))
-                    }, {
-                        label: "Next month",
-                        range: moment().range(moment().startOf("month").add(1, "month").startOf("day"), moment().add(1, "month").endOf("month").startOf("day"))
-                    }, {
+                        range: {
+                            start: moment().startOf("month").startOf("day"),
+                            end: moment().endOf("month").startOf("day")
+                        }
+                    },
+                    {
+                        label: "Next Month",
+                        range: {
+                            start: moment().startOf("month").add(1, "month").startOf("day"),
+                            end: moment().add(1, "month").endOf("month").startOf("day")
+                        }
+                    },
+                    {
                         label: "Year to date",
-                        range: moment().range(moment().startOf("year").startOf("day"), moment().endOf("day"))
+                        range: {
+                            start: moment().startOf("year").startOf("day"),
+                            end: moment().endOf("day")
+                        }
                     }
                 ];
             }

@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="initial-scale=1" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
-    <link href="../dist/ta-date-range-picker2.css" rel="stylesheet" />
+    <link href="../dist/ta-date-range-picker.css" rel="stylesheet" />
 </head>
 
 <body ng-controller="MainCtrl as ctrl">
@@ -18,7 +18,7 @@
 
         <p>&nbsp;</p>
         <h3>Default Ranges</h3>
-        <ta-date-range-picker ng-model="dateRange2" soft-apply></ta-date-range-picker>
+        <ta-date-range-picker ng-model="dateRange2" must-apply></ta-date-range-picker>
 
         <p>&nbsp;</p>
 
@@ -32,7 +32,6 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.11/angular.min.js"></script>
     <script type="text/javascript" src="libs/moment.min.js"></script>
-    <script type="text/javascript" src="libs/moment-range.min.js"></script>
     <script src="../dist/ta-date-range-picker.js"></script>
 
     <script>
@@ -48,38 +47,38 @@
             $scope.customRanges = [
                 {
                     label: "This week",
-                    range: moment().range(
-                        moment().startOf("week").startOf("day"),
-                        moment().endOf("week").startOf("day")
-                    )
+                    range: {
+                        start: moment().startOf("week").startOf("day"),
+                        end: moment().endOf("week").startOf("day")
+                    }
                 },
                 {
                     label: "Last month",
-                    range: moment().range(
-                        moment().add(-1, "month").startOf("month").startOf("day"),
-                        moment().add(-1, "month").endOf("month").startOf("day")
-                    )
+                    range:{
+                        start: moment().add(-1, "month").startOf("month").startOf("day"),
+                        end: moment().add(-1, "month").endOf("month").startOf("day")
+                    }
                 },
                 {
                     label: "This month",
-                    range: moment().range(
-                        moment().startOf("month").startOf("day"),
-                        moment().endOf("month").startOf("day")
-                    )
+                    range: {
+                        start: moment().startOf("month").startOf("day"),
+                        end: moment().endOf("month").startOf("day")
+                    }
                 },
                 {
                     label: "This year",
-                    range: moment().range(
-                        moment().startOf("year").startOf("day"),
-                        moment().endOf("year").startOf("day")
-                    )
+                    range: {
+                        start: moment().startOf("year").startOf("day"),
+                        end: moment().endOf("year").startOf("day")
+                    }
                 },
                 {
                     label: "Last year",
-                    range: moment().range(
-                        moment().startOf("year").add(-1, "year").startOf("day"),
-                        moment().add(-1, "year").endOf("year").startOf("day")
-                    )
+                    range: {
+                        start: moment().startOf("year").add(-1, "year").startOf("day"),
+                        end: moment().add(-1, "year").endOf("year").startOf("day")
+                    }
                 }
             ];
 
