@@ -1,0 +1,185 @@
+﻿ta-date-range-picker {
+  position: relative;
+
+  .selectbox .caret {
+    top: -2px;
+    position: relative;
+  }
+  .caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-top: 4px solid;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+  }
+  .selectbox {
+    background: #fff;
+    color: #333;
+    padding: 8px;
+    line-height: 18px;
+    border-radius: 4px;
+    border-width: 0 1px 4px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    display: inline-block;
+  }
+}
+
+.ta-daterangepicker {
+  position: absolute;
+  left: auto;
+  right: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  list-style: none;
+  font-size: 14px;
+  text-align: left;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  background-clip: padding-box;
+  margin-left: -1000px;
+  z-index: 1000;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+
+  .calendar,
+  .ranges {
+    float: left;
+  }
+  .calendar {
+    max-width: 270px;
+    margin: 4px 0 4px 4px;
+  }
+
+  .ranges {
+    font-size: 11px;
+    margin: 4px;
+    text-align: left;
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      width: 160px;
+    }
+
+    li {
+      font-size: 13px;
+      background: #f5f5f5;
+      border: 1px solid #f5f5f5;
+      color: #08c;
+      padding: 3px 12px;
+      margin-bottom: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      &.active,
+      &:hover {
+        background: #08c;
+        border: 1px solid #08c;
+        color: #fff;
+      }
+    }
+  }
+
+  .calendar-table {
+    border: 1px solid #f5f5f5;
+  }
+
+  table {
+    width: 100%;
+    margin: 0;
+  }
+
+  td,
+  th {
+    white-space: nowrap;
+    text-align: center;
+    font-size: 13px;
+
+    &.available{
+      cursor: pointer;
+      &:hover {
+        background: #eee;
+      }
+    }
+
+    // the child element has the click event handler, so don't have a parent with hover/active states + padding
+    > div {
+      padding: 4px;
+    }
+
+    a {
+      color: black;
+      text-decoration: none;
+      display: block;
+    }
+  }
+  $startendradius: 4px;
+  td {
+    cursor: pointer;
+    &.in-range {
+      background: #ebf4f8;
+      border-radius: 0;
+    }
+    &.active,
+    &.active:hover {
+      background-color: #357ebd;
+      border-color: #3071a9;
+      color: #fff;
+    }
+    &.start-date {
+      // border-radius: 4px 0 0 4px;
+      border-top-left-radius: $startendradius;
+      border-bottom-left-radius: $startendradius;
+    }
+    &.end-date {
+      // border-radius: 0 4px 4px 0;
+      border-top-right-radius: $startendradius;
+      border-bottom-right-radius: $startendradius;
+    }
+    &.off,
+    &.off.end-date,
+    &.off.in-range,
+    &.off.start-date {
+      color: #999;
+      background: #fff;
+    }
+  }
+
+  .input {
+    position: relative;
+
+    i {
+      position: absolute;
+      left: 8px;
+      top: 8px;
+    }
+    a {
+      position: absolute;
+      right: 30px;
+      top: 0px;
+      color: #cccccc;
+      text-decoration: none;
+    }
+  }
+
+  .input-mini {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #555;
+    display: block;
+    height: 30px;
+    line-height: 30px;
+    margin: 0 0 5px;
+    padding: 0 6px 0 28px;
+    width: 100%;
+  }
+}
