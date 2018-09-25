@@ -264,7 +264,7 @@
                     }
                 }
             };
-            //Unsure why this is built this way, but refactored anyways
+            //Unsure why this is built this way, but left in when refactoring anyways, _for now_
             function tryStopProp($event) {
                 return $event && typeof $event.stopPropagation === "function" ?
                     $event.stopPropagation() : void 0;
