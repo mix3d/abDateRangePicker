@@ -102,8 +102,11 @@
                                     $scope.showCalendars = true;
                                     return;
                                 }
-                                // FIXME: This is a bug, range.clone doesn't work anymore after removing moment-range
-                                $scope.currentSelection = range.clone();
+                                // unsure why we use clone so much...
+                                $scope.currentSelection = {
+                                    start: range.start.clone(),
+                                    end: range.end.clone()
+                                }
                                 $scope.updateStartOrEndDate();
                                 if($scope.mustApply){
                                     $scope.inputDates[0] = $scope.currentSelection.start.format(pickerDateFormat);

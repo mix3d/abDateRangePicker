@@ -91,10 +91,10 @@ After searching all over for a simple AngularJS Date Range Picker that did not r
 
 ### Attributes
 
-| Name                    | Type               | Default                              | Description                                                                                      |
-| ----------------------- | ------------------ | ------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| `ng-model`              | Object, required   | `{ start: moment(), end: moment() }` | An object with start and end keys pointing to moment.js objects.                                 |
-| `ranges`                | Object, optional   |                                      | an array of objects, each with a label:"text" and range: {start, end} values. See above example. |
-| `callback`              | Function, optional |                                      | Callback function is called when the dates are changed / applied                                 |
-| `must-apply`            | N/A                | `false`                              | Callback function is called when the dates are changed / applied                                 |
-| `always-show-calendars` | N/A                | `false`                              | Callback function is called when the dates are changed / applied                                 |
+| Name                    | Type               | Default                              | Description                                                                                                                       |
+| ----------------------- | ------------------ | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `ng-model`              | Object, required   | `{ start: moment(), end: moment() }` | An object with start and end keys pointing to moment.js objects.                                                                  |
+| `ranges`                | Object, optional   |                                      | an array of objects, each with a label:"text" and range: {start, end} values. See above example.                                  |
+| `callback`              | Function, optional |                                      | Callback function is called when the dates are changed / applied                                                                  |
+| `always-show-calendars` | N/A                | `false`                              | Will always show the calendars. Default is to only show calendar if the custom range button is clicked.                           |
+| `must-apply`            | N/A                | `false`                              | Requires the Apply button to be clicked regardless of selecting a custom range or a predefined range. Always shows the calendars. |
