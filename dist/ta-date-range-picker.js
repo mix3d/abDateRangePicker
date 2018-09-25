@@ -1,6 +1,4 @@
-﻿(function () {
-    angular.module("tawani.utils", ['pasvaz.bindonce']);
-
+(function () {
     angular.module("tawani.utils").directive('taDateRangePicker',
         ["$compile", "$timeout", function ($compile, $timeout) {
             var CUSTOM = "CUSTOM";
@@ -376,7 +374,7 @@
                 function getPickDateTemplate() {
                     return `
 <div ng-show="visible" ng-click="handlePickerClick($event)" class="ta-daterangepicker">
-    <div bindonce ng-repeat="month in months" class="calendar" ng-show="showCalendars">
+    <div ng-repeat="month in months" class="calendar" ng-show="showCalendars">
         <div class="input">
             <input class="input-mini active" type="text" ng-model="inputDates[$index]" ng-change="updateStartOrEndDate($first,$last)"
                 ng-blur="moveToMonth($first,$index)" />
@@ -391,19 +389,19 @@
                         <th class="available"><a ng-if="$first" ng-click="move(month.date, -1, $event)"><i class="glyphicon glyphicon-chevron-left"></i>
                             </a></th>
                         <th colspan="5">
-                            <div class="month-name" bo-text="month.name"></div>
+                            <div class="month-name">{{::month.name}}</div>
                         </th>
                         <th class="available"> <a ng-if="$last" ng-click="move(month.date, +1, $event)"><i class="glyphicon glyphicon-chevron-right"></i>
                             </a> </th>
                     </tr>
                     <tr>
-                        <th bindonce ng-repeat="day in weekDays" class="weekday" bo-text="day"></th>
+                        <th ng-repeat="day in weekDays" class="weekday">{{::day}}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr bindonce ng-repeat="week in month.weeks">
+                    <tr ng-repeat="week in month.weeks">
                         <td ng-repeat="day in week" ng-class="getClassName(day)">
-                            <div ng-if="day.number" bo-text="day.number" ng-click="select(day, $event)"></div>
+                            <div ng-if="day.number" ng-click="select(day, $event)">{{::day.number}}</div>
                         </td>
                     </tr>
                 </tbody>
@@ -412,8 +410,8 @@
     </div>
     <div class="ranges">
         <ul>
-            <li bindonce ng-repeat="item in ranges" ng-class="{\'active\':item.active}">
-                <div ng-click="setRange(item.range,$event)">{{item.label}}</div>
+            <li ng-repeat="item in ranges" ng-class="{\'active\':item.active}">
+                <div ng-click="setRange(item.range,$event)">{{::item.label}}</div>
             </li>
         </ul>
         <div>
