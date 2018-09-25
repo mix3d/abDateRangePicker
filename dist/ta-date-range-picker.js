@@ -11,9 +11,15 @@
                     ranges: "=",
                     callback: "&"
                 },
-                template: "<div class=\"selectbox\"><i class=\"fa fa-calendar\"></i> <span ng-show=\"model\">{{model.start.format(\"LL\")}} - {{model.end.format(\"LL\")}}</span> <span ng-hide=\"model\">Select date range</span> <b class=\"caret\"></b></div>",
+                template: `
+                <div class="selectbox">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                    <span ng-show="model">{{model.start.format("LL")}}
+                        - {{model.end.format("LL")}}</span>
+                    <span ng-hide="model">Select date range</span>
+                    <b class="caret"></b>
+                </div>`,
                 link: function (scope, element, attrs) {
-                    //scope.name = 'Aaron';
                     scope.weekDays = moment.weekdaysMin();
 
                     //set default ranges
@@ -23,7 +29,7 @@
                     scope.show = function () {
                         //clear prevs
                         scope.currentSelection = null;
-                        
+
                         //prepare
                         prepareMonths(scope);
                         scope.selection = scope.model;
@@ -134,10 +140,8 @@
                         var currentStart, currentEnd;
 
                         if (n < 0) {
-                            
                             currentStart = date.clone().add(n, 'months');
                             currentEnd = currentStart.clone().add(1, 'months');
-                            
                         } else {
                             currentEnd = date.clone().add(n, 'months');
                             currentStart = currentEnd.clone().add(-1, 'months');
@@ -220,19 +224,17 @@
                     scope.moveToMonth = function (first, index) {
                         if (!first)
                             return;
-                        
+
                         var start = moment(scope.inputDates[0]);
                         if (!start)
                             return;
-                            
+
                         if (!start.isSame(scope.months[index].date, 'month')) {
                             //move to month
                             scope.months[0] = createMonth(start.clone());
                             scope.months[1] = createMonth(start.clone().add(1, 'months'));
                         }
-                        
                     }
-                    
 
                     /**************************************************************************************/
                     //load popup template
@@ -372,46 +374,54 @@
             }
 
                 function getPickDateTemplate() {
-                    return ''
-                        + '<div ng-show="visible" ng-click="handlePickerClick($event)" class="ta-daterangepicker">'
-                        + '<div bindonce ng-repeat="month in months" class="calendar" ng-show="showCalendars">'
-                        + '<div class="input">'
-                        + '<input class="input-mini active" type="text" ng-model="inputDates[$index]" ng-change="updateStartOrEndDate($first,$last)" ng-blur="moveToMonth($first,$index)"/>'
-                        + '<i class="fa fa-calendar"></i>'
-                        + '<a ng-show="$last && currentSelection && currentSelection.start && currentSelection.end" href="" ng-click="clear()"><i class="fa fa-remove"></i></a>'
-                        + '</div>'
-                        + '<div class="calendar-table">'
-                        + '<table>'
-                        + '<thead>'
-                        + '<tr>'
-                        + '<th class="available"><a ng-if="$first" ng-click="move(month.date, -1, $event)"><i class="fa fa-chevron-left"></i> </a></th>'
-                        + '<th colspan="5"><div class="month-name" bo-text="month.name"></div></th>'
-                        + '<th class="available"> <a ng-if="$last" ng-click="move(month.date, +1, $event)"><i class="fa fa-chevron-right"></i> </a> </th>'
-                        + '</tr>'
-                        + '<tr>'
-                        + '<th bindonce ng-repeat="day in weekDays" class="weekday" bo-text="day"></th>'
-                        + '</tr>'
-                        + '</thead>'
-                        + '<tbody>'
-                        + '<tr bindonce ng-repeat="week in month.weeks">'
-                        + '<td ng-repeat="day in week" ng-class="getClassName(day)">'
-                        + '<div ng-if="day.number" bo-text="day.number" ng-click="select(day, $event)"></div>'
-                        + '</td>'
-                        + '</tr>'
-                        + '</tbody>'
-                        + '</table>'
-                        + '</div>'
-                        + '</div>'
-                        + '<div class="ranges">'
-                        + '<ul>'
-                        + '<li bindonce ng-repeat="item in ranges" ng-class="{\'active\':item.active}"><div ng-click="setRange(item.range,$event)">{{item.label}}</div></li>'
-                        + '</ul>'
-                        + '<div>'
-                        + '<button class="btn btn-sm btn-success" ng-click="applySelection()" ng-disabled="!showCalendars || !currentSelection || !currentSelection.start || !currentSelection.end">Apply</button> '
-                        + '<button class="btn btn-sm btn-default" ng-click="hide()">Cancel</button>'
-                        + '</div>'
-                        + '</div>'
-                        + '</div>';
+                    return `
+<div ng-show="visible" ng-click="handlePickerClick($event)" class="ta-daterangepicker">
+    <div bindonce ng-repeat="month in months" class="calendar" ng-show="showCalendars">
+        <div class="input">
+            <input class="input-mini active" type="text" ng-model="inputDates[$index]" ng-change="updateStartOrEndDate($first,$last)"
+                ng-blur="moveToMonth($first,$index)" />
+            <i class="glyphicon glyphicon-calendar"></i>
+            <a ng-show="$last && currentSelection && currentSelection.start && currentSelection.end" href="" ng-click="clear()"><i
+                    class="glyphicon glyphicon-remove"></i></a>
+        </div>
+        <div class="calendar-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="available"><a ng-if="$first" ng-click="move(month.date, -1, $event)"><i class="glyphicon glyphicon-chevron-left"></i>
+                            </a></th>
+                        <th colspan="5">
+                            <div class="month-name" bo-text="month.name"></div>
+                        </th>
+                        <th class="available"> <a ng-if="$last" ng-click="move(month.date, +1, $event)"><i class="glyphicon glyphicon-chevron-right"></i>
+                            </a> </th>
+                    </tr>
+                    <tr>
+                        <th bindonce ng-repeat="day in weekDays" class="weekday" bo-text="day"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr bindonce ng-repeat="week in month.weeks">
+                        <td ng-repeat="day in week" ng-class="getClassName(day)">
+                            <div ng-if="day.number" bo-text="day.number" ng-click="select(day, $event)"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="ranges">
+        <ul>
+            <li bindonce ng-repeat="item in ranges" ng-class="{\'active\':item.active}">
+                <div ng-click="setRange(item.range,$event)">{{item.label}}</div>
+            </li>
+        </ul>
+        <div>
+            <button class="btn btn-sm btn-success" ng-click="applySelection()" ng-disabled="!showCalendars || !currentSelection || !currentSelection.start || !currentSelection.end">Apply</button>
+            <button class="btn btn-sm btn-default" ng-click="hide()">Cancel</button>
+        </div>
+    </div>
+</div>`;
                 }
             }
     ]);
