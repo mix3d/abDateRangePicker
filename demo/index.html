@@ -18,12 +18,12 @@
 
         <p>&nbsp;</p>
         <h3>Default Ranges</h3>
-        <ta-date-range-picker ng-model="dateRange2" must-apply></ta-date-range-picker>
+        <ta-date-range-picker ng-model="dateRange2" must-apply input-format="l"></ta-date-range-picker>
 
         <p>&nbsp;</p>
 
         <h3>Custom Ranges - with Callback</h3>
-        <ta-date-range-picker ng-model="dateRange" ranges="customRanges" callback="dateRangeChanged()" always-show-calendars></ta-date-range-picker>
+        <ta-date-range-picker ng-model="dateRange" ranges="customRanges" month-format="MM YY" callback="dateRangeChanged()" always-show-calendars></ta-date-range-picker>
 
         <p>&nbsp;</p>
         <h3>Call back: <code>{{mycallback}}</code></h3>
@@ -41,7 +41,10 @@
         app.controller("MainCtrl", ['$scope', function ($scope) {
 
             // specify default date range in controller
-            $scope.dateRange = moment().range("12-05-2015", "01-25-2016");
+            $scope.dateRange = {
+                        start: moment("12-05-2015", "MM-DD-YYYY"),
+                        end: moment("01-25-2016", "MM-DD-YYYY")
+                    };
 
             //Select range options
             $scope.customRanges = [

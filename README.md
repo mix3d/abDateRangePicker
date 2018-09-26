@@ -1,28 +1,34 @@
 # taDateRangePicker
 
 ### Fork Notes:
-In looking for a datepicker for an older AngularJS, I came across this library of a jQuery-less translation of the bootstrap date-range picker I had my eye on.
+In looking for a datepicker for an older AngularJS, I came across this AngularJS library of a jQuery-less translation of the bootstrap date-range picker I had my eye on.
 
-Unfortunately, it was outdated, so I forked to upgrade to a more modern workflow and process, and put my own API preferences & interactions on the tool.
+Unfortunately, it was rather dated, so I forked to upgrade to a more modern workflow and process, and put my own API preferences & interactions on the tool.
 
-Goals:
+Feel free to fork and PR for the following features:
+
+#### Goals:
 
 - Configurable date display formatting
+- Configurable Date Validation
+- Configurable start-of-week display (Sunday vs Monday, other locales?)
 - ~~Configurable selection styles~~
   - Select predefined range = applies selection
   - Select predefined range = updates calendars selection, and always requires Apply button
 - ~~Remove dependencies~~
   - ~~bindonce~~ _- done_
   - ~~moment-range~~ _- done_
-    - Didn't actually use any moment-range-specific things, just start and end, replaced with objects.
-- configurable text-icon package
-- toggle icon display
+    - Didn't actually use any moment-range-specific things, just start and end and clone; replaced with POJO's.
+- Configurable text-icon package
+- ~~Toggleable calendar icon display~~
 - Proper Build Steps
   - ~~NPM config~~
   - ~~Sass~~
   - JS Compiler w/ Webpack/Babel
 
-
+#### Nice to have:
+- Locale & language configurable
+  - likely not going to happen, I don't have experience or a need for my project
 
 ### Pure AngularJS DateRangePicker (no jQuery required)
 
@@ -91,10 +97,13 @@ After searching all over for a simple AngularJS Date Range Picker that did not r
 
 ### Attributes
 
-| Name                    | Type               | Default                              | Description                                                                                                                       |
-| ----------------------- | ------------------ | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
-| `ng-model`              | Object, required   | `{ start: moment(), end: moment() }` | An object with start and end keys pointing to moment.js objects.                                                                  |
-| `ranges`                | Object, optional   |                                      | an array of objects, each with a label:"text" and range: {start, end} values. See above example.                                  |
-| `callback`              | Function, optional |                                      | Callback function is called when the dates are changed / applied                                                                  |
-| `always-show-calendars` | N/A                | `false`                              | Will always show the calendars. Default is to only show calendar if the custom range button is clicked.                           |
-| `must-apply`            | N/A                | `false`                              | Requires the Apply button to be clicked regardless of selecting a custom range or a predefined range. Always shows the calendars. |
+| Name                    | Type               | Default                              | Description                                                                                                                                                                                                                                          |
+| ----------------------- | ------------------ | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ng-model`              | Object, required   | `{ start: moment(), end: moment() }` | An object with start and end keys pointing to moment.js objects.                                                                                                                                                                                     |
+| `ranges`                | Object, optional   |                                      | an array of objects, each with a label:"text" and range: {start, end} values. See above example.                                                                                                                                                     |
+| `callback`              | Function, optional | `undefined`                          | Callback function is called when the dates are changed / applied.                                                                                                                                                                                    |
+| `input-format`          | String, optional   | `"l"`                                | Format String for the display of the dates in the root picker button element, as <br>`start.format(input-format) - end.format(input-format)`<br>Defaults to `"l"`, for Locale specific formatting.                                                   |
+| `picker-date-format`    | String, optional   | `"MM/DD/YYYY"`                       | Format String for the display of dates in the popup selector, above the calendar view.                                                                                                                                                               |
+| `month-format`          | String, optional   | `"MMM YYYY"`                         | Format String for the display of the month and year above the calendar table.                                                                                                                                                                        |
+| `always-show-calendars` | N/A                | `false`                              | Will always show the calendars. Default is to only show calendar if the custom range button is clicked.                                                                                                                                              |
+| `must-apply`            | N/A                | `false`                              | Requires the Apply button to be clicked regardless of selecting a custom range or a predefined range. As a result, the selected date range will show on the calendar.<br>Ignores the `always-show-calendars` section and always shows the calendars. |

@@ -3,19 +3,22 @@
         ["$compile", "$timeout", function ($compile, $timeout) {
             const CUSTOM = "CUSTOM";
 
-            let inputFormat = "l";
-            let pickerDateFormat = "MM/DD/YYYY";
-            let monthFormat = "MMM YYYY";
+            const defaultInputFormat = "l";
+            const defaultPickerDateFormat = "MM/DD/YYYY";
+            const defaultMonthFormat = "MMM YYYY";
 
             return {
                 scope: {
                     model: "=ngModel",
                     ranges: "=?",
+                    // monthFormat: "@?",
+                    // inputFormat: "@?",
+                    // pickerDateFormat: "@?",
                     callback: "&"
                 },
                 template: html`
                 <div class="selectbox">
-                    <i class="glyphicon glyphicon-calendar"></i>
+                    <i ng-if="!hideCalendarIcons" class="glyphicon glyphicon-calendar"></i>
                     <span ng-show="model">{{model.start.format(inputFormat)}}
                         - {{model.end.format(inputFormat)}}</span>
                     <span ng-hide="model">Select date range</span>
@@ -28,11 +31,22 @@
                             $scope.mustApply = attrs.hasOwnProperty('mustApply')
                             // if mustApply is set, then always show calendars
                             $scope.alwaysShowCalendars = attrs.hasOwnProperty('alwaysShowCalendars') || $scope.mustApply;
+                            // Don't show the calendar icons
+                            $scope.hideCalendarIcons = attrs.hasOwnProperty('hideCalendarIcons') || false;
+
+                            $scope.hideCustomRange = attrs.hasOwnProperty('hideCustomRange') || false;
+
+                            // Define defaults for local variables
+                            // Use $scope for instance-specific settings. Using top-level variables creates global setting conflicts.
+                            $scope.inputFormat = attrs.inputFormat || defaultInputFormat;
+                            $scope.pickerDateFormat = attrs.pickerDateFormat || defaultPickerDateFormat;
+                            $scope.monthFormat = attrs.monthFormat || defaultMonthFormat;
                         },
                         post($scope, element, attrs, controller) {
                             $scope.weekDays = moment.weekdaysMin();
 
-                            $scope.inputFormat = inputFormat;
+                            // $scope.inputFormat = defaultInputFormat;
+                            console.log('input format scope', $scope.inputFormat)
 
                             //set default ranges
                             if (!($scope.ranges && $scope.ranges.length))
@@ -48,15 +62,19 @@
                                 prepareRanges($scope);
                                 return $scope.visible = true;
                             };
+
                             $scope.hide = function ($event) {
                                 tryStopProp($event)
                                 $scope.visible = false;
                                 return $scope.start = null;
                             };
+
+                            // No idea why this is setup like this. To prevent click propagation at the root of the directive?!
                             $scope.handlePickerClick = function ($event) {
                                 return tryStopProp($event);
                             };
 
+                            // Handle clicks on a day cell on the visible calendars
                             $scope.select = function (day, $event) {
                                 tryStopProp($event);
                                 if (day.disabled) {
@@ -72,7 +90,7 @@
                                 if ((current.start && current.end) || !current.start) {
                                     current.start = moment(date);
                                     current.end = null;
-                                    $scope.inputDates[0] = current.start.format(pickerDateFormat);
+                                    $scope.inputDates[0] = current.start.format($scope.pickerDateFormat);
                                     $scope.inputDates[1] = '';
                                 } else if (current.start && !current.end) {
                                     if (current.start.isAfter(date, 'day')) {
@@ -83,12 +101,12 @@
                                         // if end date is before start, swap start and end
                                         current.end = current.start
                                         current.start = moment(date);
-                                        $scope.inputDates[0] = current.start.format(pickerDateFormat);
-                                        $scope.inputDates[1] = current.end.format(pickerDateFormat);
+                                        $scope.inputDates[0] = current.start.format($scope.pickerDateFormat);
+                                        $scope.inputDates[1] = current.end.format($scope.pickerDateFormat);
                                     }
                                     else if (current.start.isBefore(date, 'day')) {
                                         current.end = moment(date);
-                                        $scope.inputDates[1] = current.end.format(pickerDateFormat);
+                                        $scope.inputDates[1] = current.end.format($scope.pickerDateFormat);
                                     }
                                 }
                                 $scope.resetRangeClass();
@@ -109,12 +127,15 @@
                                 }
                                 $scope.updateStartOrEndDate();
                                 if($scope.mustApply){
-                                    $scope.inputDates[0] = $scope.currentSelection.start.format(pickerDateFormat);
-                                    $scope.inputDates[1] = $scope.currentSelection.end.format(pickerDateFormat);
+                                    $scope.inputDates[0] = $scope.currentSelection.start.format($scope.pickerDateFormat);
+                                    $scope.inputDates[1] = $scope.currentSelection.end.format($scope.pickerDateFormat);
                                 }
                                 else{
                                     $scope.showCalendars = false;
-                                    $scope.selection = $scope.currentSelection.clone();
+                                    $scope.selection = {
+                                        start: $scope.currentSelection.start.clone(),
+                                        end: $scope.currentSelection.end.clone()
+                                    };
                                     $scope.commitAndClose($event);
                                 }
                             };
@@ -164,7 +185,10 @@
 
                             $scope.getCurrentSelection = function() {
                                 if (!$scope.currentSelection && $scope.selection)
-                                    $scope.currentSelection = $scope.selection.clone();
+                                    $scope.currentSelection = {
+                                        start: $scope.selection.start.clone(),
+                                        end: $scope.selection.end.clone()
+                                    };
                                 if (!$scope.currentSelection)
                                     $scope.currentSelection = {};
                                 return $scope.currentSelection;
@@ -205,6 +229,7 @@
                                     $scope.ranges[$scope.ranges.length - 1].active = true;
                             };
 
+                            // used by the input handler to update the date range if the left or right calendar input is manually changed via keyboard
                             $scope.updateStartOrEndDate = function (first, last) {
                                 var current = $scope.getCurrentSelection();
 
@@ -216,7 +241,7 @@
                                     current.start = start;
                                     if (!current.end || current.end.isBefore(start, 'day')) {
                                         current.end = start;
-                                        $scope.inputDates[1] = current.end.format(pickerDateFormat);
+                                        $scope.inputDates[1] = current.end.format($scope.pickerDateFormat);
                                     }
                                 } else if (last) {
                                     var end = moment($scope.inputDates[1]);
@@ -226,7 +251,7 @@
                                     current.end = end;
                                     if (!current.start || current.start.isAfter(end, 'day')) {
                                         current.start = end;
-                                        $scope.inputDates[0] = current.start.format(pickerDateFormat);
+                                        $scope.inputDates[0] = current.start.format($scope.pickerDateFormat);
                                     }
                                 }
                                 $scope.resetRangeClass();
@@ -248,7 +273,11 @@
                             }
 
                             /**************************************************************************************/
-                            //load popup template
+                            // load popup template
+                            // IDEA: Global state, if one picker opens, all others close?
+                            // IDEA: Backdrop shadow?
+                            // UX-FIX: Enforce visibility by not letting left-side go offscreen?
+
                             var el = $compile(angular.element(getPickDateTemplate()))($scope);
                             element.append(el);
 
@@ -280,19 +309,23 @@
                     }
                 }
             };
+
             //Unsure why this is built this way, but left in when refactoring anyways, _for now_
             function tryStopProp($event) {
                 return $event && typeof $event.stopPropagation === "function" ?
                     $event.stopPropagation() : void 0;
             }
-
+            /**
+             * Add the Custom range feature, if not disabled via Attr.
+             * @param $scope
+             */
             function prepareRanges($scope) {
-                if ($scope.ranges[$scope.ranges.length - 1].range !== CUSTOM)
+                if (!$scope.hideCustomRange && $scope.ranges[$scope.ranges.length - 1].range !== CUSTOM)
                     $scope.ranges.push({ label: 'Custom Range', range: CUSTOM });
 
                 $scope.resetRangeClass();
 
-                if ($scope.ranges[$scope.ranges.length - 1].active)
+                if (!$scope.hideCustomRange && $scope.ranges[$scope.ranges.length - 1].active)
                     $scope.showCalendars = true;
             };
 
@@ -308,17 +341,16 @@
                 if (!start) start = moment();
                 if (!end) end = moment();
 
-                $scope.months.push(createMonth(start.clone().startOf("month")));
-                $scope.months.push(createMonth(start.clone().startOf("month").add(1, "month")));
+                $scope.months.push(createMonth(start.clone().startOf("month"), $scope.monthFormat));
+                $scope.months.push(createMonth(start.clone().startOf("month").add(1, "month"), $scope.monthFormat));
 
                 $scope.inputDates = [];
-                $scope.inputDates.push(start.format(pickerDateFormat));
-                $scope.inputDates.push(end.format(pickerDateFormat));
+                $scope.inputDates.push(start.format($scope.pickerDateFormat));
+                $scope.inputDates.push(end.format($scope.pickerDateFormat));
             }
 
-            function createMonth(date) {
-                var month = { name: date.format(monthFormat), date: date, weeks: getWeeks(date) };
-                return month;
+            function createMonth(date, monthFormat) {
+                return { name: date.format(monthFormat), date: date, weeks: getWeeks(date) };
             }
 
             function sameMonth(a, b, other) {
@@ -327,7 +359,7 @@
                 }
                 return a.date();
             }
-
+            // TODO: add start of week as configurable
             function getWeeks(m) {
                 var lastOfMonth = m.clone().endOf('month'),
                     lastOfMonthDate = lastOfMonth.date(),
@@ -346,6 +378,7 @@
 
                     var week = [];
                     for (var i = startOfWeek; i <= endOfWeek; i++)
+                        // FIXME: uses date and not moment
                         week.push({ number: i, date: new Date(thisYear, thisMonth, i) });
 
                     var days = week.length;
@@ -409,7 +442,9 @@
                     }
                 ];
             }
-            //Hack to allow html style rendering in Template Literals VS Code
+
+            // Hack to allow html style rendering in Template Literals VS Code
+            // NOTE: Should probably remove in the future
             function html(h, ...values){ return h.join('');};
 
                 function getPickDateTemplate() {
@@ -419,7 +454,7 @@
         <div class="input">
             <input class="input-mini active" type="text" ng-model="inputDates[$index]" ng-change="updateStartOrEndDate($first,$last)"
                 ng-blur="moveToMonth($first,$index)" />
-            <i class="glyphicon glyphicon-calendar"></i>
+            <i ng-if="!hideCalendarIcons" class="glyphicon glyphicon-calendar"></i>
             <a ng-show="$last && currentSelection && currentSelection.start && currentSelection.end" href="" ng-click="clear()"><i
                     class="glyphicon glyphicon-remove"></i></a>
         </div>
