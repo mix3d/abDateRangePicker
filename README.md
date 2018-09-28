@@ -9,8 +9,10 @@ Feel free to fork and PR for the following features:
 
 #### Goals:
 
-- Configurable date display formatting
+- ~~Configurable date display formatting~~
+- Upgrade to latest bootstrap-daterangepicker designs / dom
 - Configurable Date Validation
+  - non-selectable dates & date ranges
 - Configurable start-of-week display (Sunday vs Monday, other locales?)
 - ~~Configurable selection styles~~
   - Select predefined range = applies selection
@@ -18,7 +20,7 @@ Feel free to fork and PR for the following features:
 - ~~Remove dependencies~~
   - ~~bindonce~~ _- done_
   - ~~moment-range~~ _- done_
-    - Didn't actually use any moment-range-specific things, just start and end and clone; replaced with POJO's.
+    - Forked code didn't actually use any moment-range-specific things, just start / end and clone; replaced with POJO's.
 - Configurable text-icon package
 - ~~Toggleable calendar icon display~~
 - Proper Build Steps
@@ -27,8 +29,9 @@ Feel free to fork and PR for the following features:
   - JS Compiler w/ Webpack/Babel
 
 #### Nice to have:
+
 - Locale & language configurable
-  - likely not going to happen, I don't have experience or a need for my project
+  - *likely not going to happen, I don't have experience or a need for my project*
 
 ### Pure AngularJS DateRangePicker (no jQuery required)
 
@@ -107,3 +110,4 @@ After searching all over for a simple AngularJS Date Range Picker that did not r
 | `month-format`          | String, optional   | `"MMM YYYY"`                         | Format String for the display of the month and year above the calendar table.                                                                                                                                                                        |
 | `always-show-calendars` | N/A                | `false`                              | Will always show the calendars. Default is to only show calendar if the custom range button is clicked.                                                                                                                                              |
 | `must-apply`            | N/A                | `false`                              | Requires the Apply button to be clicked regardless of selecting a custom range or a predefined range. As a result, the selected date range will show on the calendar.<br>Ignores the `always-show-calendars` section and always shows the calendars. |
+NNN

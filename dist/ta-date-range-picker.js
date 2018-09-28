@@ -45,9 +45,6 @@
                         post($scope, element, attrs, controller) {
                             $scope.weekDays = moment.weekdaysMin();
 
-                            // $scope.inputFormat = defaultInputFormat;
-                            console.log('input format scope', $scope.inputFormat)
-
                             //set default ranges
                             if (!($scope.ranges && $scope.ranges.length))
                                 $scope.ranges = getDefaultRanges();
@@ -60,17 +57,22 @@
                                 prepareMonths($scope);
                                 $scope.selection = $scope.model;
                                 prepareRanges($scope);
+                                console.log("show")
+                                updatePosition();
+                                angular.element(window).bind("resize", onResizeFn);
                                 return $scope.visible = true;
                             };
 
                             $scope.hide = function ($event) {
                                 tryStopProp($event)
                                 $scope.visible = false;
+                                angular.element(window).unbind("resize", onResizeFn);
                                 return $scope.start = null;
                             };
 
                             // No idea why this is setup like this. To prevent click propagation at the root of the directive?!
                             $scope.handlePickerClick = function ($event) {
+                                console.log("pickerclick")
                                 return tryStopProp($event);
                             };
 
@@ -168,6 +170,8 @@
 
                             $scope.move = function (date, n, $event) {
                                 tryStopProp($event);
+                                console.log("moved")
+                                debugger;
 
                                 var currentStart, currentEnd;
 
@@ -281,13 +285,9 @@
                             var el = $compile(angular.element(getPickDateTemplate()))($scope);
                             element.append(el);
 
-                            element.bind("click", function (e) {
-                                if (e !== null) {
-                                    if (typeof e.stopPropagation === "function") {
-                                        e.stopPropagation();
-                                    }
-                                }
-                                return $scope.$apply(function () {
+                            element.bind("click", e => {
+                                tryStopProp(e)
+                                return $scope.$apply(() => {
                                     if ($scope.visible) {
                                         return $scope.hide();
                                     } else {
@@ -301,14 +301,47 @@
                                 });
                                 return true;
                             };
+                            var onResizeFn = function (e) {
+                                console.log("resized")
+                                $scope.$apply(updatePosition)
+                            }
+
                             angular.element(document).bind("click", documentClickFn);
                             $scope.$on('$destroy', function () {
+                                angular.element(window).unbind('resize', onResizeFn);
                                 return angular.element(document).unbind('click', documentClickFn);
                             });
+
+                            function updatePosition() {
+                                var containerTop, containerRight;
+
+                                let dom = element[0],
+                                    parentRightEdge = angular.element(window)[0].innerWidth;
+
+                                containerTop = dom.offsetTop + dom.offsetHeight;
+                                containerRight = dom.offsetLeft + dom.offsetWidth;
+                                let posRight = parentRightEdge - containerRight;
+                                let css = {
+                                    top: containerTop,
+                                    left: 'auto',
+                                    right: posRight,
+                                }
+                                console.log("updating position", css)
+                                el.css(css);
+                                if (el[0].offsetLeft < 0 ) {
+                                    console.log("offset left off of window")
+                                    el.css({
+                                        left: 10,
+                                        right: 'auto'
+                                    });
+                                }
+                            }
                         },
                     }
                 }
             };
+            ////////////////////////////////////////
+            //Non Scope local functions
 
             //Unsure why this is built this way, but left in when refactoring anyways, _for now_
             function tryStopProp($event) {
@@ -449,42 +482,49 @@
 
                 function getPickDateTemplate() {
                     return html`
-<div ng-show="visible" ng-click="handlePickerClick($event)" class="ta-daterangepicker">
-    <div ng-repeat="month in months" class="calendar" ng-show="showCalendars || alwaysShowCalendars">
-        <div class="input">
-            <input class="input-mini active" type="text" ng-model="inputDates[$index]" ng-change="updateStartOrEndDate($first,$last)"
-                ng-blur="moveToMonth($first,$index)" />
-            <i ng-if="!hideCalendarIcons" class="glyphicon glyphicon-calendar"></i>
-            <a ng-show="$last && currentSelection && currentSelection.start && currentSelection.end" href="" ng-click="clear()"><i
-                    class="glyphicon glyphicon-remove"></i></a>
+<div ng-show="visible" ng-click="handlePickerClick($event)" class="ta-daterangepicker" ng-class="{'calendar-open':showCalendars || alwaysShowCalendars}">
+    <div  ng-show="showCalendars || alwaysShowCalendars" class="calendar-container">
+        <div ng-repeat="month in months" class="calendar">
+            <div class="input">
+                <input class="input-mini active" type="text" ng-model="inputDates[$index]" ng-change="updateStartOrEndDate($first,$last)"
+                    ng-blur="moveToMonth($first,$index)" />
+                <i ng-if="!hideCalendarIcons" class="glyphicon glyphicon-calendar"></i>
+                <a ng-show="$last && currentSelection && currentSelection.start && currentSelection.end" href="" ng-click="clear()">
+                    <i class="glyphicon glyphicon-remove"></i>
+                </a>
+            </div>
+            <div class="calendar-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="available">
+                                <a ng-if="$first" ng-click="move(month.date, -1, $event)"><i class="glyphicon glyphicon-chevron-left"></i></a>
+                            </th>
+                            <th colspan="5">
+                                <div class="month-name">{{::month.name}}</div>
+                            </th>
+                            <th class="available">
+                                <a ng-if="$last" ng-click="move(month.date, +1, $event)"><i class="glyphicon glyphicon-chevron-right"></i>
+                                </a>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th ng-repeat="day in weekDays" class="weekday">{{::day}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="week in month.weeks">
+                            <td ng-repeat="day in week" ng-class="getClassName(day)">
+                                <div ng-if="day.number" ng-click="select(day, $event)">{{::day.number}}</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="calendar-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="available">
-                            <a ng-if="$first" ng-click="move(month.date, -1, $event)"><i class="glyphicon glyphicon-chevron-left"></i></a>
-                        </th>
-                        <th colspan="5">
-                            <div class="month-name">{{::month.name}}</div>
-                        </th>
-                        <th class="available">
-                            <a ng-if="$last" ng-click="move(month.date, +1, $event)"><i class="glyphicon glyphicon-chevron-right"></i>
-                            </a>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th ng-repeat="day in weekDays" class="weekday">{{::day}}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="week in month.weeks">
-                        <td ng-repeat="day in week" ng-class="getClassName(day)">
-                            <div ng-if="day.number" ng-click="select(day, $event)">{{::day.number}}</div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="actions">
+            <button class="btn btn-sm btn-default" ng-click="hide()">Cancel</button>
+            <button class="btn btn-sm btn-primary pull-right" ng-click="applySelection()" ng-disabled="!showCalendars || !currentSelection || !currentSelection.start || !currentSelection.end">Apply</button>
         </div>
     </div>
     <div class="ranges">
@@ -493,10 +533,6 @@
                 {{::item.label}}
             </li>
         </ul>
-        <div>
-            <button class="btn btn-sm btn-success" ng-click="applySelection()" ng-disabled="!showCalendars || !currentSelection || !currentSelection.start || !currentSelection.end">Apply</button>
-            <button class="btn btn-sm btn-default" ng-click="hide()">Cancel</button>
-        </div>
     </div>
 </div>`;
                 }

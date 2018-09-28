@@ -1,5 +1,6 @@
 ﻿ta-date-range-picker {
-  position: relative;
+  // position: relative;
+  display: inline-block;
 
   .selectbox .caret {
     top: -2px;
@@ -32,9 +33,9 @@
   position: absolute;
   left: auto;
   right: 0;
+  // margin-left: -1000px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   min-width: 160px;
-  padding: 5px 0;
   margin: 2px 0 0;
   list-style: none;
   font-size: 14px;
@@ -44,53 +45,55 @@
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 4px;
   background-clip: padding-box;
-  margin-left: -1000px;
   z-index: 1000;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
 
-  .calendar,
+  // .calendar,
   .ranges {
     float: left;
   }
-  .calendar {
-    max-width: 270px;
-    margin: 4px 0 4px 4px;
+  .calendar-container{
+    float:left;
+    padding: 0 8px 0 0;
   }
-
+  .calendar {
+    display: inline-block;
+    max-width: 270px;
+    margin: 8px 0 8px 8px;
+  }
+  .actions{
+    padding:8px;
+  }
   .ranges {
-    font-size: 11px;
-    margin: 4px;
+    font-size: 14px;
+    // margin: 4px;
     text-align: left;
 
     ul {
       list-style: none;
       margin: 0;
-      padding: 0;
+      padding: 4px 0;
       width: 160px;
     }
 
     li {
-      font-size: 13px;
-      background: #f5f5f5;
-      border: 1px solid #f5f5f5;
-      color: #08c;
-      padding: 3px 12px;
-      margin-bottom: 8px;
-      border-radius: 5px;
+      // background: #f5f5f5;
+      // border: 1px solid #f5f5f5;
+      // color: #08c;
+      padding: 8px 12px;
+      // border-radius: 5px;
       cursor: pointer;
-      &.active,
-      &:hover {
+      &:hover{
+        background: #eee;
+      }
+      &.active{
         background: #08c;
-        border: 1px solid #08c;
+        // border: 1px solid #08c;
         color: #fff;
       }
     }
-  }
-
-  .calendar-table {
-    border: 1px solid #f5f5f5;
   }
 
   table {
