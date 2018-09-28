@@ -170,8 +170,6 @@
 
                             $scope.move = function (date, n, $event) {
                                 tryStopProp($event);
-                                console.log("moved")
-                                debugger;
 
                                 var currentStart, currentEnd;
 
@@ -183,8 +181,8 @@
                                     currentStart = currentEnd.clone().add(-1, 'months');
                                 }
 
-                                $scope.months[0] = createMonth(currentStart);
-                                $scope.months[1] = createMonth(currentEnd);
+                                $scope.months[0] = createMonth(currentStart, $scope.monthFormat);
+                                $scope.months[1] = createMonth(currentEnd, $scope.monthFormat);
                             }
 
                             $scope.getCurrentSelection = function() {
@@ -271,8 +269,8 @@
 
                                 if (!start.isSame($scope.months[index].date, 'month')) {
                                     //move to month
-                                    $scope.months[0] = createMonth(start.clone());
-                                    $scope.months[1] = createMonth(start.clone().add(1, 'months'));
+                                    $scope.months[0] = createMonth(start.clone(), $scope.monthFormat);
+                                    $scope.months[1] = createMonth(start.clone().add(1, 'months'), $scope.monthFormat);
                                 }
                             }
 
@@ -497,13 +495,13 @@
                 <table>
                     <thead>
                         <tr>
-                            <th class="available">
+                            <th ng-class="{'available':$first}">
                                 <a ng-if="$first" ng-click="move(month.date, -1, $event)"><i class="glyphicon glyphicon-chevron-left"></i></a>
                             </th>
                             <th colspan="5">
                                 <div class="month-name">{{::month.name}}</div>
                             </th>
-                            <th class="available">
+                            <th ng-class="{'available':$last}">
                                 <a ng-if="$last" ng-click="move(month.date, +1, $event)"><i class="glyphicon glyphicon-chevron-right"></i>
                                 </a>
                             </th>
