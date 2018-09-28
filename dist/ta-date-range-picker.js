@@ -1,5 +1,5 @@
 (function () {
-    angular.module("tawani.utils", []).directive('taDateRangePicker',
+    angular.module("mDateRangePicker", []).directive('mDateRangePicker',
         ["$compile", "$timeout", function ($compile, $timeout) {
             const CUSTOM = "CUSTOM";
 

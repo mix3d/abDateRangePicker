@@ -36,51 +36,47 @@
 
     <script>
     (function(){
-        var app = angular.module("app", ['tawani.utils']);
+        var app = angular.module("app", ['mDateRangePicker']);
 
         app.controller("MainCtrl", ['$scope', function ($scope) {
 
             // specify default date range in controller
             $scope.dateRange = {
-                        start: moment("12-05-2015", "MM-DD-YYYY"),
-                        end: moment("01-25-2016", "MM-DD-YYYY")
-                    };
-
+                start: moment("12-05-2015", "MM-DD-YYYY"),
+                end: moment("01-25-2016", "MM-DD-YYYY")
+            };
+            let today = moment(),
+                endOfSeason = moment('01-12-19','MM-DD-YY');
+            if (today.isSameOrBefore(endOfSeason))
+                endOfSeason = today;
             //Select range options
             $scope.customRanges = [
                 {
-                    label: "This week",
+                    label: "Last week",
                     range: {
                         start: moment().startOf("week").startOf("day"),
-                        end: moment().endOf("week").startOf("day")
+                        end: moment().endOf("week").endOf("day")
                     }
                 },
                 {
-                    label: "Last month",
+                    label: "Last 2 Weeks",
                     range:{
-                        start: moment().add(-1, "month").startOf("month").startOf("day"),
-                        end: moment().add(-1, "month").endOf("month").startOf("day")
+                        start: moment().startOf("week").add(1, "week").startOf("day"),
+                        end:  moment().add(1, "week").endOf("week").endOf("day")
                     }
                 },
                 {
-                    label: "This month",
+                    label: "Last Month",
                     range: {
                         start: moment().startOf("month").startOf("day"),
-                        end: moment().endOf("month").startOf("day")
+                        end: moment().endOf("month").endOf("day")
                     }
                 },
                 {
-                    label: "This year",
+                    label: "2018 Season",
                     range: {
-                        start: moment().startOf("year").startOf("day"),
-                        end: moment().endOf("year").startOf("day")
-                    }
-                },
-                {
-                    label: "Last year",
-                    range: {
-                        start: moment().startOf("year").add(-1, "year").startOf("day"),
-                        end: moment().add(-1, "year").endOf("year").startOf("day")
+                        start: moment("07-18-18","MM-DD-YY"),
+                        end: endOfSeason.endOf('day')
                     }
                 }
             ];
@@ -89,7 +85,6 @@
             $scope.dateRangeChanged = function() {
                 $scope.mycallback = " from " + $scope.dateRange.start.format("LL") + " to " + $scope.dateRange.end.format("LL");
             }
-
         }]);
     })();
     </script>
