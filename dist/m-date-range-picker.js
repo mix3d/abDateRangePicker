@@ -8,7 +8,6 @@
             const defaultMonthFormat = "MMM YYYY";
 
             console.log("loaded module")
-            debugger;
 
             return {
                 scope: {
@@ -26,7 +25,6 @@
                 </div>`,
                 compile(tElement, tAttrs, transclude) {
                     console.log("compiled")
-                    debugger;
                     return {
                         pre($scope, element, attrs, controller) {
                             //check for valueless attributes
