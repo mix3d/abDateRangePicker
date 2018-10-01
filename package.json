@@ -1,7 +1,7 @@
 {
-  "name": "abDateRangePicker",
+  "name": "abdaterangepicker",
   "version": "1.0.0",
-  "description": "AngularJS date range picker",
+  "description": "AngularJS and Bootstrap date range picker",
   "main": "n/a",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

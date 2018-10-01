@@ -1,19 +1,24 @@
 # abDateRangePicker
 
-### Fork Notes:
-In looking for a datepicker for an older AngularJS, I came across this AngularJS library of a jQuery-less translation of the bootstrap date-range picker I had my eye on. I renamed it abDateRangePicker for **A**ngular-**B**ootstrap.
+### Pure AngularJS DateRangePicker (no jQuery required)
 
-Unfortunately, it was rather dated, so I forked to upgrade to a more modern workflow and process, and put my own API preferences & interactions on the tool.
+![alt tag](pure-angular-date-range-picker.png)
+
+In looking for a datepicker for an older AngularJS, I came across this AngularJS library of a jQuery-less translation of the bootstrap date-range picker I had my eye on. I renamed it abDateRangePicker for **A**ngular-**B**ootstrap, after making substantial edits.
+
+The original AngularJS code is adapted from [tawani's taDateRangePicker](https://github.com/tawani/taDateRangePicker), with the CSS style adapted from an older version of [dangrossman's bootstrap-daterangepicker](https://github.com/dangrossman/bootstrap-daterangepicker). I have since updated it to match that repo's newer styling.
+
+The original Repo was rather dated, so I forked to upgrade to a more modern workflow and process, and put my own API preferences & interactions on the tool.
 
 Feel free to fork and PR for the following features:
 
 #### Goals:
 
-- ~~Configurable date display formatting~~
-- Upgrade to latest bootstrap-daterangepicker designs / dom
-  - done, ish. Enough for now, at least!
+- Configurable text-icon package
 - Configurable Date Validation
   - non-selectable dates & date ranges
+- More UI positioning logic, mobile responsive design.
+  - templateable, like bootstrap-daterangepicker?
 - ~~Configurable selection styles~~
   - Select predefined range = applies selection
   - Select predefined range = updates calendars selection, and always requires Apply button
@@ -21,8 +26,10 @@ Feel free to fork and PR for the following features:
   - ~~bindonce~~ _- done_
   - ~~moment-range~~ _- done_
     - Forked code didn't actually use any moment-range-specific things, just start / end and clone; replaced with POJO's.
-- Configurable text-icon package
 - ~~Toggleable calendar icon display~~
+- ~~Configurable date display formatting~~
+- Upgrade to latest bootstrap-daterangepicker designs / dom
+  - done, ish. Enough for now, at least!
 - Proper Build Steps
   - ~~NPM config~~
   - ~~Sass~~
@@ -34,12 +41,7 @@ Feel free to fork and PR for the following features:
   - Also, Configurable start-of-week display (Sunday vs Monday, other locales?)
   - *likely not going to happen, I don't have experience or a need for my US-only project*
 
-### Pure AngularJS DateRangePicker (no jQuery required)
-
-![alt tag](pure-angular-date-range-picker.png)
-
-After searching all over for a simple AngularJS Date Range Picker that did not require jQuery, I ended writing this lite version. The CSS style is adapted from [dangrossman's bootstrap-daterangepicker](https://github.com/dangrossman/bootstrap-daterangepicker)
-
+## Usage:
 ### Add required files
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
@@ -99,6 +101,7 @@ After searching all over for a simple AngularJS Date Range Picker that did not r
 ### Dependencies
 
 - [Moment.js](https://github.com/moment/moment)
+  - currently assumes moment is loaded globally.
 
 ### Attributes
 
