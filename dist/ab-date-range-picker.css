@@ -1,9 +1,9 @@
-m-date-range-picker {
+ab-date-range-picker {
   display: inline-block; }
-  m-date-range-picker .selectbox .caret {
+  ab-date-range-picker .selectbox .caret {
     top: -2px;
     position: relative; }
-  m-date-range-picker .caret {
+  ab-date-range-picker .caret {
     display: inline-block;
     width: 0;
     height: 0;
@@ -12,7 +12,7 @@ m-date-range-picker {
     border-top: 4px solid;
     border-right: 4px solid transparent;
     border-left: 4px solid transparent; }
-  m-date-range-picker .selectbox {
+  ab-date-range-picker .selectbox {
     background: #fff;
     color: #333;
     padding: 8px;

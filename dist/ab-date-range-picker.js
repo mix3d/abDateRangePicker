@@ -1,5 +1,5 @@
 (function () {
-    angular.module("mDateRangePicker", []).directive('mDateRangePicker',
+    angular.module("abDateRangePicker", []).directive('abDateRangePicker',
         ["$compile", "$timeout", function ($compile, $timeout) {
             const CUSTOM = "CUSTOM";
 

@@ -1,7 +1,7 @@
-# mDateRangePicker
+# abDateRangePicker
 
 ### Fork Notes:
-In looking for a datepicker for an older AngularJS, I came across this AngularJS library of a jQuery-less translation of the bootstrap date-range picker I had my eye on.
+In looking for a datepicker for an older AngularJS, I came across this AngularJS library of a jQuery-less translation of the bootstrap date-range picker I had my eye on. I renamed it abDateRangePicker for **A**ngular-**B**ootstrap.
 
 Unfortunately, it was rather dated, so I forked to upgrade to a more modern workflow and process, and put my own API preferences & interactions on the tool.
 
@@ -11,9 +11,9 @@ Feel free to fork and PR for the following features:
 
 - ~~Configurable date display formatting~~
 - Upgrade to latest bootstrap-daterangepicker designs / dom
+  - done, ish. Enough for now, at least!
 - Configurable Date Validation
   - non-selectable dates & date ranges
-- Configurable start-of-week display (Sunday vs Monday, other locales?)
 - ~~Configurable selection styles~~
   - Select predefined range = applies selection
   - Select predefined range = updates calendars selection, and always requires Apply button
@@ -31,7 +31,8 @@ Feel free to fork and PR for the following features:
 #### Nice to have:
 
 - Locale & language configurable
-  - *likely not going to happen, I don't have experience or a need for my project*
+  - Also, Configurable start-of-week display (Sunday vs Monday, other locales?)
+  - *likely not going to happen, I don't have experience or a need for my US-only project*
 
 ### Pure AngularJS DateRangePicker (no jQuery required)
 
@@ -39,27 +40,30 @@ Feel free to fork and PR for the following features:
 
 After searching all over for a simple AngularJS Date Range Picker that did not require jQuery, I ended writing this lite version. The CSS style is adapted from [dangrossman's bootstrap-daterangepicker](https://github.com/dangrossman/bootstrap-daterangepicker)
 
-### Sample usage
-
-    <ta-date-range-picker ng-model="dateRange" ranges="customRanges"
-            callback="dateRangeChanged()"></ta-date-range-picker>
-
 ### Add required files
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
-    <link href="dist/ta-date-range-picker.css" rel="stylesheet" />
+    <link href="dist/ab-date-range-picker.css" rel="stylesheet" />
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.11/angular.min.js"></script>
     <script type="text/javascript" src="libs/moment.min.js"></script>
-    <script src="dist/ta-date-range-picker.js"></script>
+    <script src="dist/ab-date-range-picker.js"></script>
+
+### Sample usage
+
+    <ab-date-range-picker ng-model="dateRange" ranges="customRanges"
+            callback="dateRangeChanged()"></ab-date-range-picker>
 
 ### Sample Code
 
-    angular.module("app", ['tawani.utils'])
+    angular.module("app", ['abDateRangePicker'])
         .controller("MainCtrl", ['$scope', function ($scope) {
 
             // specify default date range in controller
-            $scope.dateRange = { start: moment("2015-12-05"), end: moment("2016-01-25")};
+            $scope.dateRange = {
+                start: moment("2015-12-05"),
+                end: moment("2016-01-25")
+            };
 
             //Select range options
             $scope.customRanges = [
@@ -86,10 +90,8 @@ After searching all over for a simple AngularJS Date Range Picker that did not r
                 }
             ];
 
-            $scope.SelectedRangeText = "None";
             $scope.dateRangeChanged = function() {
-                $scope.SelectedRangeText = `from  ${$scope.dateRange.start.format("LL")}
-                                            to ${$scope.dateRange.end.format("LL")}`;
+                console.log("the range was changed!");
             }
 
         }]);

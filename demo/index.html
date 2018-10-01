@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="initial-scale=1" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
-    <link href="../dist/m-date-range-picker.css" rel="stylesheet" />
+    <link href="../dist/ab-date-range-picker.css" rel="stylesheet" />
 </head>
 
 <body ng-controller="MainCtrl as ctrl">
@@ -18,19 +18,19 @@
 
         <p>&nbsp;</p>
         <h3>Default Ranges</h3>
-        <m-date-range-picker
+        <ab-date-range-picker
             ng-model="dateRange2"
             input-format="l"
-        ></m-date-range-picker>
+        ></ab-date-range-picker>
 
         <p>&nbsp;</p>
 
         <h3>Custom Ranges</h3>
-        <m-date-range-picker
+        <ab-date-range-picker
             ng-model="dateRange"
             month-format="MM YY"
             always-show-calendars
-        ></m-date-range-picker>
+        ></ab-date-range-picker>
             <!-- callback="dateRangeChanged()" -->
 
         <!-- <p>&nbsp;</p>
@@ -40,11 +40,11 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.11/angular.min.js"></script>
     <script type="text/javascript" src="libs/moment.min.js"></script>
-    <script src="../dist/m-date-range-picker.js"></script>
+    <script src="../dist/ab-date-range-picker.js"></script>
 
     <script>
     (function(){
-        var app = angular.module("app", ['mDateRangePicker']);
+        var app = angular.module("app", ['abDateRangePicker']);
 
         app.controller("MainCtrl", ['$scope', function ($scope) {
 

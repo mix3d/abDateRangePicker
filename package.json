@@ -1,5 +1,5 @@
 {
-  "name": "mdaterangepicker",
+  "name": "abDateRangePicker",
   "version": "1.0.0",
   "description": "AngularJS date range picker",
   "main": "n/a",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mix3d/mDateRangePicker.git"
+    "url": "git+https://github.com/mix3d/abDateRangePicker.git"
   },
   "keywords": [
     "AngularJS",
@@ -20,9 +20,9 @@
   "author": "Madison Dickson",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mix3d/mDateRangePicker/issues"
+    "url": "https://github.com/mix3d/abDateRangePicker/issues"
   },
-  "homepage": "https://github.com/mix3d/mDateRangePicker#readme",
+  "homepage": "https://github.com/mix3d/abDateRangePicker#readme",
   "dependencies": {
     "moment": "^2.22.2"
   },
