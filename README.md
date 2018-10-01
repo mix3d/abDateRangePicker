@@ -8,7 +8,7 @@ In looking for a datepicker for an older AngularJS, I came across this AngularJS
 
 The original AngularJS code is adapted from [tawani's taDateRangePicker](https://github.com/tawani/taDateRangePicker), with the CSS style adapted from an older version of [dangrossman's bootstrap-daterangepicker](https://github.com/dangrossman/bootstrap-daterangepicker). I have since updated it to match that repo's newer styling.
 
-The original Repo was rather dated, so I forked to upgrade to a more modern workflow and process, and put my own API preferences & interactions on the tool.
+The original project was rather dated, so I forked to upgrade to a more modern workflow and process, and put my own API preferences & interactions on the tool.
 
 Feel free to fork and PR for the following features:
 
