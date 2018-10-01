@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mix3d/taDateRangePicker.git"
+    "url": "git+https://github.com/mix3d/mDateRangePicker.git"
   },
   "keywords": [
     "AngularJS",
@@ -20,9 +20,9 @@
   "author": "Madison Dickson",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mix3d/taDateRangePicker/issues"
+    "url": "https://github.com/mix3d/mDateRangePicker/issues"
   },
-  "homepage": "https://github.com/mix3d/taDateRangePicker#readme",
+  "homepage": "https://github.com/mix3d/mDateRangePicker#readme",
   "dependencies": {
     "moment": "^2.22.2"
   },
