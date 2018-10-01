@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="initial-scale=1" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
-    <link href="../dist/ta-date-range-picker.css" rel="stylesheet" />
+    <link href="../dist/m-date-range-picker.css" rel="stylesheet" />
 </head>
 
 <body ng-controller="MainCtrl as ctrl">
@@ -18,12 +18,21 @@
 
         <p>&nbsp;</p>
         <h3>Default Ranges</h3>
-        <ta-date-range-picker ng-model="dateRange2" input-format="l"></ta-date-range-picker>
+        <m-date-range-picker
+            ng-model="dateRange2"
+            input-format="l"
+            ranges="customRanges"
+        ></ta-date-range-picker>
 
         <p>&nbsp;</p>
 
         <h3>Custom Ranges - with Callback</h3>
-        <ta-date-range-picker ng-model="dateRange" ranges="customRanges" month-format="MM YY" callback="dateRangeChanged()" always-show-calendars></ta-date-range-picker>
+        <m-date-range-picker
+            ng-model="dateRange"
+            month-format="MM YY"
+            always-show-calendars
+        ></ta-date-range-picker>
+            <!-- callback="dateRangeChanged()" -->
 
         <p>&nbsp;</p>
         <h3>Call back: <code>{{mycallback}}</code></h3>
@@ -32,11 +41,11 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.11/angular.min.js"></script>
     <script type="text/javascript" src="libs/moment.min.js"></script>
-    <script src="../dist/ta-date-range-picker.js"></script>
+    <script src="../dist/m-date-range-picker.js"></script>
 
     <script>
     (function(){
-        var app = angular.module("app", ['mDateRangePicker']);
+        var app = angular.module("app", ['mTools']);
 
         app.controller("MainCtrl", ['$scope', function ($scope) {
 
@@ -49,42 +58,63 @@
                 endOfSeason = moment('01-12-19','MM-DD-YY');
             if (today.isSameOrBefore(endOfSeason))
                 endOfSeason = today;
+
             //Select range options
             $scope.customRanges = [
                 {
-                    label: "Last week",
+                    label: "Current week",
+                    sublabel: "Sunday to Today",
                     range: {
                         start: moment().startOf("week").startOf("day"),
-                        end: moment().endOf("week").endOf("day")
+                        end: moment().endOf("day")
+                    }
+                },
+                {
+                    label: "Last week",
+                    sublabel: "Prior 7 days to Sunday",
+                    range: {
+                        start: moment().startOf("week").add(-1, "week").startOf("day"),
+                        end: moment().startOf("week").add(-1, "day").endOf("day")
                     }
                 },
                 {
                     label: "Last 2 Weeks",
+                    sublabel: "Prior 14 days to Sunday",
                     range:{
-                        start: moment().startOf("week").add(1, "week").startOf("day"),
-                        end:  moment().add(1, "week").endOf("week").endOf("day")
+                        start: moment().startOf("week").add(-2, "week").startOf("day"),
+                        end:  moment().startOf("week").add(-1, "day").endOf("day")
+                    }
+                },
+                {
+                    label: "Current Month",
+                    sublabel: "1st of month to Today",
+                    range: {
+                        start: moment().startOf("month").startOf("day"),
+                        end: moment().endOf("day")
                     }
                 },
                 {
                     label: "Last Month",
+                    sublabel: "Prior Calendar Month",
                     range: {
-                        start: moment().startOf("month").startOf("day"),
-                        end: moment().endOf("month").endOf("day")
+                        start: moment().add(-1, "month").startOf("month").startOf("day"),
+                        end: moment().add(-1, "month").endOf("month").endOf("day")
                     }
                 },
                 {
                     label: "2018 Season",
+                    sublabel: "July 15, 2018 to Today",
                     range: {
-                        start: moment("07-18-18","MM-DD-YY"),
+                        start: moment("07-15-18","MM-DD-YY"),
                         end: endOfSeason.endOf('day')
                     }
                 }
             ];
 
-            $scope.mycallback = "None";
-            $scope.dateRangeChanged = function() {
-                $scope.mycallback = " from " + $scope.dateRange.start.format("LL") + " to " + $scope.dateRange.end.format("LL");
-            }
+            // $scope.mycallback = "None";
+            // $scope.dateRangeChanged = function() {
+            //     $scope.mycallback = " from " + $scope.dateRange.start.format("LL") + " to " + $scope.dateRange.end.format("LL");
+            // }
         }]);
     })();
     </script>

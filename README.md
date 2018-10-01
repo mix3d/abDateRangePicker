@@ -1,4 +1,4 @@
-# taDateRangePicker
+# mDateRangePicker
 
 ### Fork Notes:
 In looking for a datepicker for an older AngularJS, I came across this AngularJS library of a jQuery-less translation of the bootstrap date-range picker I had my eye on.

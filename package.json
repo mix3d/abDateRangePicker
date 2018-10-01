@@ -1,11 +1,12 @@
 {
-  "name": "tadaterangepicker",
+  "name": "mdaterangepicker",
   "version": "1.0.0",
   "description": "AngularJS date range picker",
   "main": "n/a",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "sass": "node-sass .\\dist\\ta-date-range-picker.scss > .\\dist\\ta-date-range-picker.css"
+    "sass": "node-sass ./dist/ -o ./dist/",
+    "watch-sass": "node-sass -w ./dist/ -o ./dist/"
   },
   "repository": {
     "type": "git",

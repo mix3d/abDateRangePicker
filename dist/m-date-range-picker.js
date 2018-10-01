@@ -1,5 +1,5 @@
 (function () {
-    angular.module("mDateRangePicker", []).directive('mDateRangePicker',
+    angular.module("mTools", []).directive('mDateRangePicker',
         ["$compile", "$timeout", function ($compile, $timeout) {
             const CUSTOM = "CUSTOM";
 
@@ -7,13 +7,13 @@
             const defaultPickerDateFormat = "MM/DD/YYYY";
             const defaultMonthFormat = "MMM YYYY";
 
+            console.log("loaded module")
+            debugger;
+
             return {
                 scope: {
                     model: "=ngModel",
                     ranges: "=?",
-                    // monthFormat: "@?",
-                    // inputFormat: "@?",
-                    // pickerDateFormat: "@?",
                     callback: "&"
                 },
                 template: html`
@@ -25,6 +25,8 @@
                     <b class="caret"></b>
                 </div>`,
                 compile(tElement, tAttrs, transclude) {
+                    console.log("compiled")
+                    debugger;
                     return {
                         pre($scope, element, attrs, controller) {
                             //check for valueless attributes
@@ -88,7 +90,7 @@
 
                                 var date = day.date;
 
-                                // TODO: Allow scenario where clicking the same day lets you select 1 day of data, start and end. 
+                                // TODO: Allow scenario where clicking the same day lets you select 1 day of data, start and end.
                                 if ((current.start && current.end) || !current.start) {
                                     current.start = moment(date);
                                     current.end = null;
@@ -96,6 +98,7 @@
                                     $scope.inputDates[1] = '';
                                 } else if (current.start && !current.end) {
                                     if (current.start.isAfter(date, 'day')) {
+                                        // Kept for clarity, if we want to add this functionality back later
                                         // if end date is before start, make this the new start
                                         // current.start = moment(date);
                                         // $scope.inputDates[0] = current.start.format(pickerDateFormat);
@@ -144,11 +147,11 @@
 
                             $scope.commitAndClose = function () {
                                 $scope.model = $scope.selection;
-                                $timeout(function () {
-                                    if ($scope.callback) {
-                                        return $scope.callback();
-                                    }
-                                });
+                                // if ($scope.callback) {
+                                //     $timeout(function () {
+                                //         return $scope.callback();
+                                //     });
+                                // }
                                 return $scope.hide();
                             };
 
@@ -278,9 +281,8 @@
                             // load popup template
                             // IDEA: Global state, if one picker opens, all others close?
                             // IDEA: Backdrop shadow?
-                            // UX-FIX: Enforce visibility by not letting left-side go offscreen?
-
                             var el = $compile(angular.element(getPickDateTemplate()))($scope);
+                            console.log("appending EL",element,el)
                             element.append(el);
 
                             element.bind("click", e => {
@@ -311,6 +313,7 @@
                             });
 
                             function updatePosition() {
+                                console.log('udpating position')
                                 var containerTop, containerRight;
 
                                 let dom = element[0],
@@ -480,7 +483,7 @@
 
                 function getPickDateTemplate() {
                     return html`
-<div ng-show="visible" ng-click="handlePickerClick($event)" class="ta-daterangepicker" ng-class="{'calendar-open':showCalendars || alwaysShowCalendars}">
+<div ng-show="visible" ng-click="handlePickerClick($event)" class="m-daterangepicker" ng-class="{'calendar-open':showCalendars || alwaysShowCalendars}">
     <div  ng-show="showCalendars || alwaysShowCalendars" class="calendar-container">
         <div ng-repeat="month in months" class="calendar">
             <div class="input">
