@@ -7,8 +7,6 @@
             const defaultPickerDateFormat = "MM/DD/YYYY";
             const defaultMonthFormat = "MMM YYYY";
 
-            console.log("loaded module")
-
             return {
                 scope: {
                     model: "=ngModel",
@@ -24,7 +22,6 @@
                     <b class="caret"></b>
                 </div>`,
                 compile(tElement, tAttrs, transclude) {
-                    console.log("compiled")
                     return {
                         pre($scope, element, attrs, controller) {
                             //check for valueless attributes
@@ -57,7 +54,6 @@
                                 prepareMonths($scope);
                                 $scope.selection = $scope.model;
                                 prepareRanges($scope);
-                                console.log("show")
                                 updatePosition();
                                 angular.element(window).bind("resize", onResizeFn);
                                 return $scope.visible = true;
@@ -72,7 +68,7 @@
 
                             // No idea why this is setup like this. To prevent click propagation at the root of the directive?!
                             $scope.handlePickerClick = function ($event) {
-                                console.log("pickerclick")
+                                // console.log("pickerclick")
                                 return tryStopProp($event);
                             };
 
@@ -280,7 +276,6 @@
                             // IDEA: Global state, if one picker opens, all others close?
                             // IDEA: Backdrop shadow?
                             var el = $compile(angular.element(getPickDateTemplate()))($scope);
-                            console.log("appending EL",element,el)
                             element.append(el);
 
                             element.bind("click", e => {
@@ -300,7 +295,6 @@
                                 return true;
                             };
                             var onResizeFn = function (e) {
-                                console.log("resized")
                                 $scope.$apply(updatePosition)
                             }
 
@@ -311,7 +305,6 @@
                             });
 
                             function updatePosition() {
-                                console.log('udpating position')
                                 var containerTop, containerRight;
 
                                 let dom = element[0],
@@ -325,10 +318,9 @@
                                     left: 'auto',
                                     right: posRight,
                                 }
-                                console.log("updating position", css)
                                 el.css(css);
                                 if (el[0].offsetLeft < 0 ) {
-                                    console.log("offset left off of window")
+                                    // console.log("offset left off of window")
                                     el.css({
                                         left: 10,
                                         right: 'auto'
